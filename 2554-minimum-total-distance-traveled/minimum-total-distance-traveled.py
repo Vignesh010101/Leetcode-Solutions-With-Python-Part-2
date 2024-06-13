@@ -1,17 +1,13 @@
+from scipy import optimize
+import numpy
+
 class Solution:
-    def minimumTotalDistance(self, robot: List[int], factory: List[List[int]]) -> int:
-        robot.sort()
-        factory.sort()
-        m, n = len(robot), len(factory)
-        dp = [[0]*(n+1) for _ in range(m+1)] 
-        for i in range(m): dp[i][-1] = inf 
-        for j in range(n-1, -1, -1): 
-            prefix = 0 
-            qq = deque([(m, 0)])
-            for i in range(m-1, -1, -1): 
-                prefix += abs(robot[i] - factory[j][0])
-                if qq[0][0] > i+factory[j][1]: qq.popleft()
-                while qq and qq[-1][1] >= dp[i][j+1] - prefix: qq.pop()
-                qq.append((i, dp[i][j+1] - prefix))
-                dp[i][j] = qq[0][1] + prefix
-        return dp[0][0]
+    def minimumTotalDistance(self, rs: List[int], fs: List[List[int]]) -> int:
+        costs = []
+        for i, k in fs:
+            c = [abs(j-i) for j in rs]
+            for _ in range(k):
+                costs.append(c)
+        costs = numpy.array(costs)
+        return costs[optimize.linear_sum_assignment(costs)].sum() 
+        
