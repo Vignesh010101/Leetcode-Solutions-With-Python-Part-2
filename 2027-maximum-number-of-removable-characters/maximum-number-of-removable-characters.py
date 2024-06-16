@@ -2,14 +2,14 @@ class Solution:
     def maximumRemovals(self, s: str, p: str, removable: List[int]) -> int:
         def is_subsequence(k) -> bool:
             # take the FIRST k elements from removable
-            remove_set = set(removable[:k])
-            pointer = 0
+            removable_set = set(removable[:k])
+            count = 0
             for i in range(len(s)):
-                if i in remove_set:
+                if i in removable_set:
                     continue
-                if s[i] == p[pointer]:
-                    pointer += 1
-                    if pointer == len(p):
+                if s[i] == p[count]:
+                    count += 1
+                    if count == len(p):
                         return True
             return False
         # binary search for k
