@@ -1,17 +1,6 @@
 class Solution:
     def countAnagrams(self, s: str) -> int:
-        def display(word):
-            fact=math.factorial(len(word))
-            hashmap={}
-            for w in word:
-                hashmap[w]=hashmap.get(w,0)+1
-            
-            for val in hashmap.values():
-                fact//=math.factorial(val)
-            
-            return fact
-        ways=1
-        for word in s.split():
-            ways*=display(word)
-        return ways%((10**9)+ 7)
+        words, M, mul, fact = s.split(), 1000000007, lambda a, b: a*b % M, lambda n: functools.reduce(mul, range(2, n+1), 1)
+        denom = functools.reduce(mul, (fact(count) for w in words for count in collections.Counter(w).values()), 1)
+        return mul(functools.reduce(lambda t, w: mul(t, fact(len(w))), words, 1), pow(denom, -1, M))
         
