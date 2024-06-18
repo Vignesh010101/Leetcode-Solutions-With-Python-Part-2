@@ -5,23 +5,22 @@
 #         self.left = left
 #         self.right = right
 class Solution:
-    def constructFromPrePost(self, preorder: List[int], postorder: List[int]) -> Optional[TreeNode]:
+    def constructFromPrePost(self, pre: List[int], post: List[int]) -> TreeNode:
+        # read this: https://www.techiedelight.com/construct-full-binary-tree-from-preorder-postorder-sequence/
+        def helper(pre,post):
+            print('pre is: ', pre, 'post is: ', post)
+            if not pre:
+                return None
         
-        if not preorder:
-            return None  
-
-        root = TreeNode(preorder[0])
+            if len(pre)==1:
+                return TreeNode(post.pop())
         
-        if len(preorder) == 1:
-            return root  
-
-        # Find the left subtree's root value in preorder
-        left_subtree_root_val = preorder[1]
         
-        # Find the left subtree's size in postorder
-        left_subtree_size = postorder.index(left_subtree_root_val) + 1
+            node=TreeNode(post.pop()) #3
+            ind=pre.index(post[-1]) #4
         
-        root.left = self.constructFromPrePost(preorder[1:left_subtree_size+1], postorder[:left_subtree_size])
-        root.right = self.constructFromPrePost(preorder[left_subtree_size+1:], postorder[left_subtree_size:-1])
-
-        return root 
+            node.right=helper(pre[ind:],post) #1
+            node.left=helper(pre[1:ind],post) #2
+            return node
+    
+        return helper(pre,post)
