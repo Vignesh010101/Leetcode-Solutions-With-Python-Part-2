@@ -1,22 +1,22 @@
 class Solution:
     def robotSim(self, commands: List[int], obstacles: List[List[int]]) -> int:
-
-        obs = set(map(tuple,obstacles))
-        x,y, dx,dy, ans = 0,0, 0,1, 0
-
-        for c in commands:
-
-            if c < 0 :
-                dx, dy = (dy, -dx) if c+2 else (-dy, dx)  
-    
+        obstacles = {(x, y) for x, y in obstacles}
+        
+        dist = 0
+        x, y = 0, 0
+        dx, dy = 0, 1
+        
+        for move in commands:
+            if move == -2:
+                dx, dy = -dy, dx
+            elif move == -1:
+                dx, dy = dy, -dx
             else:
-                for _ in range(c):
-
-                    xx, yy = x+dx, y+dy
-                    
-                    if (xx, yy) in obs: break
-                    x, y = xx, yy
-
-            ans = max(ans, x*x + y*y)
-
-        return ans
+                for _ in range(move):
+                    if (x + dx, y + dy) in obstacles:
+                        break
+                    x, y = x + dx, y + dy
+                
+                dist = max(dist, x*x + y*y)
+                
+        return dist
