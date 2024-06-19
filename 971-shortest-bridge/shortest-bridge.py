@@ -1,48 +1,40 @@
 class Solution:
     def shortestBridge(self, grid: List[List[int]]) -> int:
-        N = len(grid)
+        n = len(grid)
+        def neighbors(cell):
+            i, j = cell
+            if i > 0 and grid[i - 1][j] != -1:
+                yield i - 1, j
+            if i + 1 < n and grid[i + 1][j] != -1:
+                yield i + 1, j
+            if j > 0 and grid[i][j - 1] != -1:
+                yield i, j - 1
+            if j + 1 < n and grid[i][j + 1] != -1:
+                yield i, j + 1
+                
+        def island():
+            for i in range(n):
+                for j in range(n):
+                    if grid[i][j]:
+                        grid[i][j] = -1
+                        return [(i, j)]
 
-        def get_neighbors(i, j):
-            for ni, nj in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
-                if 0 <= ni < N and 0 <= nj < N:
-                    yield ni, nj
-
-        # Find a piece of an island
-        start = None
-        for i in range(N):
-            for j in range(N):
-                if grid[i][j] == 1:
-                    start = (i, j)
-                    break
-            if start:
-                break
-
-        # BFS to find perimeter around one island
-        q = deque([start])
-        seen = set()
-        water = set()
+        q, q2, ans = island(), [], 1
         while q:
-            i, j = q.popleft()
-            if (i, j) in seen:
-                continue
-            seen.add((i, j))
-            for ni, nj in get_neighbors(i, j):
-                if grid[ni][nj] == 0:
-                    water.add((ni, nj))
-                else:
-                    q.append((ni, nj))
-
-        # BFS from the perimeter out, until the other island is reached
-        q = deque(water)
-        res = 0
-        while q:
-            for _ in range(len(q)):
-                i, j = q.popleft()
-                if grid[i][j] == 1:
-                    return res
-                for ni, nj in get_neighbors(i, j):
-                    if (ni, nj) in seen:
-                        continue
-                    seen.add((ni, nj))
-                    q.append((ni, nj))
-            res += 1
+            q_next = []
+            for cell in q:
+                for i, j in neighbors(cell):
+                    (q_next if grid[i][j] else q2).append((i, j))
+                    grid[i][j] = -1
+            q = q_next
+        while q2:
+            q_next = []
+            for cell in q2:
+                for i, j in neighbors(cell):
+                    if grid[i][j] == 1:
+                        return ans
+                    q_next.append((i, j))
+                    grid[i][j] = -1
+            ans += 1
+            q2 = q_next
+        return ans
