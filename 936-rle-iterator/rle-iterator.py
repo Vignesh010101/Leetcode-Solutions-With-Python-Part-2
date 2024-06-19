@@ -30,6 +30,3 @@ class RLEIterator:
 # obj = RLEIterator(encoding)
 # param_1 = obj.next(n)
 
-# Your RLEIterator object will be instantiated and called as such:
-# obj = RLEIterator(encoding)
-# param_1 = obj.next(n)
