@@ -1,15 +1,23 @@
 class Solution:
-    def minFallingPathSum(self, matrix: List[List[int]]) -> int:
-        n = len(matrix)
-        for i in range(1, n):
-            for j in range(n):
-                if j == 0:
-                    matrix[i][j] += min(matrix[i-1][j], matrix[i-1][j+1])
-                elif j == n-1:
-                    matrix[i][j] += min(matrix[i-1][j], matrix[i-1][j-1])
-                else:
-                    matrix[i][j] += min(matrix[i-1][j], matrix[i-1][j-1], matrix[i-1][j+1])
+    def minFallingPathSum(self, mat: List[List[int]]) -> int:
+        totalMin = mat[0][0]
+        lenth = len(mat)
 
-        return min(matrix[-1])
-
+        for i in range(0, lenth):
+            for j in range(0, lenth):
+                if i > 0:
+                    currentMin = mat[i - 1][j]
+                    if j > 0:
+                        currentMin = min(currentMin, mat[i - 1][j - 1])
+                    if j < lenth - 1:
+                        currentMin = min(currentMin, mat[i - 1][j + 1])
+                    
+                    mat[i][j] += currentMin;
                 
+                if i == lenth - 1:
+                    if j == 0:
+                        totalMin = mat[i][j]
+                    else:
+                        totalMin = min(totalMin, mat[i][j])
+        
+        return totalMin
