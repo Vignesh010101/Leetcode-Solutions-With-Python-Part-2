@@ -1,32 +1,25 @@
 class Solution:
-    def z_function(self, s):
-        n = len(s)
-        z = [0] * n
-        l, r = 0, 0
-        for i in range(1, n):
-            if i <= r and z[i - l] < r - i + 1:z[i] = z[i - l]
-            else:
-                z[i] = max(0, r - i + 1)
-                while i + z[i] < n and s[z[i]] == s[i + z[i]]:z[i] += 1
-            if i + z[i] - 1 > r:
-                l = i
-                r = i + z[i] - 1
-        z[0] = len(s)
-        return z
-
     def findTheString(self, lcp: List[List[int]]) -> str:
         n = len(lcp)
-        s, idx = [''] * n, 0
-        for i in range(n):
-            if i + lcp[i][i] != n: return ''
-            if s[i] == '':
-                if idx > 25: return ''
-                s[i] = chr(ord('a') + idx)
-                idx += 1
-            for j in range(i + 1, n):
-                if lcp[i][j] != lcp[j][i]: return ''
-                if lcp[i][j]:
-                    if s[j] != '' and s[j] != s[i]: return ''
-                    s[j] = s[i]
-        s = ''.join(s)
-        return '' if any(self.z_function(s[i:]) != lcp[i][i:] for i in range(n)) else s
+        ans = []
+        for i in range(n): 
+            tabu = set()
+            for j in range(i): 
+                if lcp[i][j]: 
+                    ans.append(ans[j])
+                    break
+                else: tabu.add(ans[j])
+            else: 
+                for ch in ascii_lowercase: 
+                    if ch not in tabu: 
+                        ans.append(ch)
+                        break
+                else: return ""
+        dp = [[0]*n for _ in range(n)]
+        for i in range(n-1, -1, -1): 
+            for j in range(n-1, -1, -1): 
+                if ans[i] == ans[j]: 
+                    if i == n-1 or j == n-1: dp[i][j] = 1
+                    else: dp[i][j] = 1 + dp[i+1][j+1]
+                if dp[i][j] != lcp[i][j]: return ""
+        return "".join(ans)
