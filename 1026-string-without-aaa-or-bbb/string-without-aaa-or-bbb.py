@@ -1,14 +1,12 @@
 class Solution:
     def strWithout3a3b(self, a: int, b: int) -> str:
-        res = []
-        a_in_a_row, b_in_a_row = 0, 0
-        for _ in range(a + b):
-            if (a > b and a_in_a_row < 2) or b_in_a_row == 2:
-                res.append('a')
-                a_in_a_row, b_in_a_row = a_in_a_row + 1, 0
-                a -= 1
-            else:
-                res.append('b')
-                a_in_a_row, b_in_a_row = 0, b_in_a_row + 1
-                b -= 1
-        return "".join(res)
+        if a == b:
+            return "ab" * a
+
+        x, y = ("a", "b") if a < b else ("b", "a")
+        xc, yc = (a, b) if a < b else (b, a)
+        n_yyx = min(xc, yc - xc)
+        n_yx = min(xc - n_yyx, yc - 2 * n_yyx)
+        nx = xc - n_yyx - n_yx
+        ny = yc - 2 * n_yyx - n_yx
+        return (y + y + x) * n_yyx + (y + x) * n_yx + y * ny + x * nx
