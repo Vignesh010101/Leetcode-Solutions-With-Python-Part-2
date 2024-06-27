@@ -1,24 +1,18 @@
-class Solution:
-    def gardenNoAdj(self, n: int, paths: List[List[int]]) -> List[int]:
-        lst=[[0]*4 for i in range(n)]
-        visited=[0]*(n+1)
-        adj=[[] for i in range(n+1)]
-        for i,j in paths:
-            adj[i].append(j)
-            adj[j].append(i)
-        visited[0]=1
-        ans=[0]*n
-        for i in range(1,n+1):
-            st=[i]
-            while st:
-                x=st.pop(0)
-                ans[x-1]=lst[x-1].index(0)+1
-                for i in adj[x]:
-                    if visited[i]==0:
-                        st.append(i)
-                        visited[i]=1
-                    lst[i-1][ans[x-1]-1]=1
-        return ans
-            
+from collections import defaultdict
 
-        
+class Solution:
+    def gardenNoAdj(self, n: int, paths: list[list[int]]) -> list[int]:
+        answer = [0] * n
+        map = defaultdict(list)
+
+        for i, j in paths:
+            map[i].append(j)
+            map[j].append(i)
+
+        for garden, adjacent in map.items():
+            if answer[garden-1] > 0:
+                continue
+
+            answer[garden-1] = ({1,2,3,4} - {answer[g-1] for g in adjacent if answer[g-1] > 0}).pop()
+
+        return (flower if flower > 0 else 1 for flower in answer)
