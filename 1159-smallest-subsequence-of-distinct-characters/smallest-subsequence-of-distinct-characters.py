@@ -1,4 +1,3 @@
-# C ⭕ D E ☯
 class Solution:
     def smallestSubsequence(self, s: str) -> str:
         d = Counter(s)
