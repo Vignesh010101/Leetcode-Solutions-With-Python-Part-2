@@ -1,11 +1,13 @@
 class Solution:
     def mctFromLeafValues(self, arr: List[int]) -> int:
+        stack = [float('inf')]
         res = 0
-        while len(arr) > 1:
-            index = arr.index(min(arr))
-            if 0 < index < len(arr) - 1:
-                res += arr[index] * min(arr[index - 1], arr[index + 1])
-            else:
-                res += arr[index] * (arr[index + 1] if index == 0 else arr[index - 1])
-            arr.pop(index)
+        for num in arr:
+            while stack and stack[-1] <= num:
+                cur = stack.pop()
+                if stack:
+                    res += cur * min(stack[-1], num)
+            stack.append(num)
+        while len(stack) > 2:
+            res += stack.pop() * stack[-1]
         return res
