@@ -1,19 +1,18 @@
 class Solution:
-    def maxRepOpt1(self, text: str) -> int:                     #  Example:  text = "babbab"
-
-        c = Counter(text)                                       #               c = {'a':2, 'b':4}
-
-        ch, ct = zip(*[(k, sum(1 for _ in g))                   #              ch = ('b','a','b','a','b')
-                       for k, g in groupby(text)])              #              ct = ( 1 , 1 , 2 , 1 , 1 )
-
-        n = len(ch)
-        
-        ans = max(ct[i]+(ct[i]<c[ch[i]]) for i in range(n))     #          ans = max (2 , 2,  3,  2,  2 ) = 3
-
-        for i in range(1, n-1):                                 #       i     sm+(sm<c[ch[i-1]])    ans
-                                                                #    –––––––  ––––––––––––––––––    –––
-            if ch[i-1] == ch[i+1] and ct[i] == 1:               #       0                            3
-                sm = ct[i-1]+ct[i+1]                            #       1       3 + (3 < 4) = 4      4
-                ans = max(ans, sm + (sm < c[ch[i-1]]))          #       2                            4
-                                                                #       3       3 + (3 < 4) = 4      4
-        return ans                                              #       4                            4 <–– return
+    def maxRepOpt1(self, s: str) -> int:
+        pos = defaultdict(lambda: [inf, -inf])
+        for i,c in enumerate(s):
+            pos[c] = [min(pos[c][0], i), max(pos[c][1], i)] # min and max char pos in s
+        freq = defaultdict(int)
+        max_len = 1
+        left = 0
+        for right in range(len(s)):
+            freq[s[right]] += 1
+            while len(freq) > 2 or len(freq) == 2 and min(freq.values()) > 1: # if violates statement #1
+                freq[s[left]] -= 1
+                if freq[s[left]] == 0:
+                    del freq[s[left]] # clean up the freq counter.... also could be Counter() :/
+                left += 1
+            max_char = max(freq.keys(), key=lambda x: freq[x]) # find max freq element
+            max_len = max(max_len, freq[max_char] + (pos[max_char][0] < left or right < pos[max_char][1])) # statement #2
+        return max_len
