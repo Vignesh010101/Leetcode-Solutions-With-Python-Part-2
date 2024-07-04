@@ -1,14 +1,29 @@
 class Solution:
-    def removeDuplicates(self, s: str, k: int) -> str:        
-        stck = [['$', 0]]     # a placeholder to mark stack is empty. This eliminates the need to do an empty check later
+    def removeDuplicates(self, s: str, k: int) -> str:
+        # Initialize an Empty Stack to keep track of characters and their counts.
+        stack = []
         
-        for c in s:
-            if stck[-1][0] == c:
-                stck[-1][1]+=1 # update occurences count of top element if it matches current character
-                if stck[-1][1] == k:
-                    stck.pop()
+        # Iterate Through the Input String
+        for i in s:
+            # Check for Duplicates in Stack
+            if stack and i == stack[-1][0]:
+                # If duplicate found, update the count in the stack
+                stack[-1][1] += 1
+                
+                # Check if Count Exceeds 'k', pop the character if necessary
+                if stack[-1][1] >= k:
+                    stack.pop()
             else:
-                stck.append([c, 1])            
+                # Handle Non-Duplicate Characters
+                # If current character is not equal to the top character in the stack, or the stack is empty,
+                # append a new pair [i, 1] onto the stack.
+                stack.append([i, 1])
         
-        return ''.join(c * cnt for c, cnt in stck)
-            
+        # Construct Result String
+        res = ""
+        for char, n in stack:
+            # After processing all characters, construct the result string by repeating each character according to its count.
+            res += char * n
+        
+        # Return the Final Result
+        return res
