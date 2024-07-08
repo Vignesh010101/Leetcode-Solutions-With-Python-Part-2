@@ -1,15 +1,25 @@
 class Solution:
-    import re
     def breakPalindrome(self, palindrome: str) -> str:
-        if len(palindrome) < 2:
-            return ""
-
-        ret = re.sub(r"[^a]", 'a', palindrome, 1)
-        if not self.ispal(ret):
-            return ret
-			
-        ret = re.sub(r"[^b]", 'b', palindrome[::-1], 1)[::-1]
-        return ret
         
-    def ispal(self, what):
-        return what == what[::-1]
+        n=len(palindrome)
+        if n==1:
+            return ""
+        st=""
+        for i in range(n):
+            if palindrome[i]!='a':
+                st+='a'
+                st+=palindrome[i+1:]
+                if st!=st[::-1]:
+                    return st
+                else: break
+            st+=palindrome[i]
+        return palindrome[:-1]+'b'
+        n=len(palindrome)
+        
+        if n==1: return ''
+        
+        for i in range(n//2):
+            if palindrome[i]!='a':
+                return palindrome[:i]+'a'+palindrome[i+1:]
+        return palindrome[:-1]+'b'
+            
