@@ -1,8 +1,9 @@
-# Write your MySQL query statement below
-select visited_on,
-sum(sum(amount)) over (rows between 6 preceding and current row) as amount,
-round(avg(sum(amount)) OVER (rows between 6 preceding and current row),2) AS average_amount
-from Customer
-group by visited_on
-order by visited_on 
-limit 999999 offset 6;
+select visited_on,amount,round(average_amount,2)average_amount
+from 
+	(select 
+		visited_on, 
+	 sum(amount) over (order by visited_on rows 6 preceding) amount,
+	 avg(amount) over (order by visited_on rows 6 preceding) average_amount
+	from (select visited_on, sum(amount) amount from Customer group by visited_on) a
+	) b
+where datediff(visited_on,(select min(visited_on) from Customer)) >= 6;
