@@ -1,24 +1,27 @@
 class Solution:
-    def makeConnected(self, n: int, connections: List[List[int]]) -> int:
-        count = 0           # number of redundant connections
-        network = [i for i in range(n)]
+    def makeConnected(self, n: int, connections: list[list[int]]) -> int:
+        if n - 1 > len(connections):
+            return -1
 
-        def find(x):
-            if network[x] != x:
-                network[x] = find(network[x])
-            return network[x]
+        adjList = [[] for _ in range(n)]
         
-        def union(a, b):
-            # return True if 2 nodes are already connected.
-            root_a = find(a)
-            root_b = find(b)
-            network[root_a] = root_b
-            return True if root_a == root_b else False
+        for u, v in connections: 
+            adjList[u].append(v)
+            adjList[v].append(u)
         
-        for link in connections:
-            if union(link[0], link[1]):
-                count += 1
+        ans = -1
+        seen = set()
 
-        # count the number of connected clusters
-        a = len(set([find(i) for i in range(n)]))
-        return -1 if a - 1 > count else a - 1
+        def dfs(node):
+            for n in adjList[node]:
+                if n not in seen:
+                    seen.add(n)
+                    dfs(n)
+
+        for i in range(n):
+            if i not in seen:
+                seen.add(i)
+                ans += 1
+                dfs(i)
+
+        return ans
