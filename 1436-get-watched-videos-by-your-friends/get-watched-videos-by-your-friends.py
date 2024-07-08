@@ -1,12 +1,29 @@
+from collections import Counter
+
 class Solution:
-    def watchedVideosByFriends(self, watchedVideos: List[List[str]],
-                 friends: List[List[int]], id: int, level: int) -> List[str]:
+    def watchedVideosByFriends(self, watchedVideos: List[List[str]], friends: List[List[int]], id: int, level: int) -> List[str]:
+        
+        seen = set([id])
+        queue = [id] 
+        for i in range(level):
 
-        unseen = set(range(len(watchedVideos))) - (row:={id})
+            temp = []
+            while queue:
+                
+                curr = queue.pop(0)
+                
+                for val in friends[curr]:
+                    if val not in seen:
+                        seen.add(val)
+                        temp.append(val)
+         
+            
+            queue = temp[:]
 
-        for _ in range(level):
-            unseen-= row
-            row = set(chain(*[friends[r] for r in row])) & unseen
+        ans = []
+        for val in queue:
+            ans.extend(watchedVideos[val])
 
-        ctr = Counter(chain(*[watchedVideos[r] for r in row]))
-        return sorted(ctr.keys(), key = lambda x: (ctr[x],x))     
+        ans = Counter(ans)
+
+        return [item[0] for item in sorted(ans.items(), key= lambda x: (x[1], x[0]))]
