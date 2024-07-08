@@ -1,8 +1,6 @@
 class Solution:
     def findTheWinner(self, n: int, k: int) -> int:
-        def recursion(n, k):
-            if n == 1:
-                return 0
-            return (recursion(n - 1, k) + k) % n
-
-        return recursion(n, k) + 1
+        res = 0
+        for player_num in range(2, n + 1):
+            res: int = (res + k) % player_num
+        return res + 1
