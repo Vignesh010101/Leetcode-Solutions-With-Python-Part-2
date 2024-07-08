@@ -1,22 +1,12 @@
 class Solution:
-    def watchedVideosByFriends(self, watchedVideos: List[List[str]], friends: List[List[int]], id: int, level: int) -> List[str]:
-        videos = defaultdict(int)
-        q = deque([id])
-        visited = set([id])
+    def watchedVideosByFriends(self, watchedVideos: List[List[str]],
+                 friends: List[List[int]], id: int, level: int) -> List[str]:
 
-        while level > 0:
-            for _ in range(len(q)):
-                person = q.popleft()
+        unseen = set(range(len(watchedVideos))) - (row:={id})
 
-                for friend in friends[person]:
-                    if friend not in visited:
-                        visited.add(friend)
-                        q.append(friend)
+        for _ in range(level):
+            unseen-= row
+            row = set(chain(*[friends[r] for r in row])) & unseen
 
-                        if level == 1:
-                            for vid in watchedVideos[friend]:
-                                videos[vid] += 1
-            
-            level -= 1
-
-        return sorted(list(videos.keys()), key = lambda k: (videos[k], k))
+        ctr = Counter(chain(*[watchedVideos[r] for r in row]))
+        return sorted(ctr.keys(), key = lambda x: (ctr[x],x))     
