@@ -1,29 +1,22 @@
-from collections import Counter
-
 class Solution:
     def watchedVideosByFriends(self, watchedVideos: List[List[str]], friends: List[List[int]], id: int, level: int) -> List[str]:
-        
-        seen = set([id])
-        queue = [id] 
-        for i in range(level):
+        videos = defaultdict(int)
+        q = deque([id])
+        visited = set([id])
 
-            temp = []
-            while queue:
-                
-                curr = queue.pop(0)
-                
-                for val in friends[curr]:
-                    if val not in seen:
-                        seen.add(val)
-                        temp.append(val)
-         
+        while level > 0:
+            for _ in range(len(q)):
+                person = q.popleft()
+
+                for friend in friends[person]:
+                    if friend not in visited:
+                        visited.add(friend)
+                        q.append(friend)
+
+                        if level == 1:
+                            for vid in watchedVideos[friend]:
+                                videos[vid] += 1
             
-            queue = temp[:]
+            level -= 1
 
-        ans = []
-        for val in queue:
-            ans.extend(watchedVideos[val])
-
-        ans = Counter(ans)
-
-        return [item[0] for item in sorted(ans.items(), key= lambda x: (x[1], x[0]))]
+        return sorted(list(videos.keys()), key = lambda k: (videos[k], k))
