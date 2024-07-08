@@ -1,22 +1,19 @@
-# Write your MySQL query statement below
-WITH cte AS (
-    SELECT mr.*, u.name, m.title
-    FROM MovieRating mr
-    LEFT JOIN Users u ON mr.user_id = u.user_id
-    LEFT JOIN Movies m ON mr.movie_id = m.movie_id
-)
-
-(SELECT name AS results
-FROM cte 
-GROUP BY name
-ORDER BY COUNT(*) DESC, name
+-- Write your PostgreSQL query statement below
+(SELECT name as results
+FROM
+    (SELECT user_id, name, COUNT(*) rating_cnt
+    FROM MovieRating LEFT JOIN Users USING (user_id)
+    GROUP BY user_id, name) users_
+ORDER BY rating_cnt DESC, name
 LIMIT 1)
 
 UNION ALL
 
-(SELECT title
-FROM cte
-WHERE DATE_FORMAT(created_at, "%Y-%m") = "2020-02"
-GROUP BY title
-ORDER BY AVG(rating) DESC, title
+(SELECT title as results
+FROM
+    (SELECT movie_id, title, AVG(rating) avg_rating
+    FROM MovieRating LEFT JOIN Movies USING (movie_id)
+    WHERE to_char(created_at, 'YYYY-MM') = '2020-02'
+    GROUP BY movie_id, title) movies_
+ORDER BY avg_rating DESC, title
 LIMIT 1)
