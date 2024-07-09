@@ -11,51 +11,18 @@
 #         self.right = right
 class Solution:
     def isSubPath(self, head: Optional[ListNode], root: Optional[TreeNode]) -> bool:
+        def isEqual(treeNode, listNode):
+            if not listNode: return True
+            if not treeNode or treeNode.val != listNode.val: return False
+            return isEqual(treeNode.left, listNode.next) or isEqual(treeNode.right, listNode.next)
+
+        queue = deque([root])
+        while queue:
+            for _ in range(len(queue)):
+                cur = queue.popleft()
+                if cur.val == head.val and isEqual(cur, head):
+                    return True
+                if cur.left: queue.append(cur.left)
+                if cur.right: queue.append(cur.right)
         
-        self.graph = collections.defaultdict(list)
-        self.lst = []
-        tmp = head
-        while tmp != None:
-            self.lst.append(tmp)
-            tmp = tmp.next
-
-        def helper(root, parent):
-            if not root: return
-            if parent != None:
-                self.graph[parent].append(root)
-                self.graph[root].append(parent)
-
-            helper(root.left, root)
-            helper(root.right, root)
-        
-        helper(root, None)
-
-        self.ans = False
-        self.seen = set()
-
-
-        def dfs(root, depth):
-            if depth==len(self.lst):
-                self.ans = True
-                return
-            for v in self.graph[root]:
-                if v in self.seen: continue
-                if v.val == self.lst[depth].val:
-                    self.seen.add(v)
-                    dfs(v, depth+1)
-                    self.seen.remove(v)
-        
-        def dfs2(root):
-            if not root:
-                return
-            
-            if root.val==head.val:
-                self.seen.add(root)
-                dfs(root, 1)
-                self.seen.remove(root)
-            
-            dfs2(root.left)
-            dfs2(root.right)
-
-        dfs2(root)
-        return self.ans        
+        return False        
