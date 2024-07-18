@@ -1,20 +1,36 @@
 class Solution:
     def maxDiff(self, num: int) -> int:
-        num = str(num)
+        numList = list(str(num))
+        greaterNumber, smallerNumber = str(num), str(num)
+        numToReplace = -1
+        for char in greaterNumber:
+            if int(char) < 9:
+                numToReplace = char
+                break
+        if numToReplace != -1:
+            for i,val in enumerate(numList):
+                if val == numToReplace:
+                    numList[i] = '9'
+            
+            greaterNumber = int(''.join(numList))
         
-        def convert(s, index, target):
-            if index >= len(s):
-                return s
-            if s[index] == target:
-                return convert(s, index + 1, '0' if target == '1' else target)
-            if index > 0 and s[0] == s[index]:
-                return convert(s, index + 1, '0' if target == '1' else target)
-            temp = ''.join([x if x != s[index] else target for x in s])
-            return temp
+        numList = list(str(num))
+        numToReplace = -1
+        for char in smallerNumber:
+            if int(char) > 1:
+                numToReplace = char
+                break
+        if numToReplace != -1:
+            newreplacement = '1'
+            if smallerNumber[0] != numToReplace:
+                newreplacement = '0'
+            for i,val in enumerate(numList):
+                if val == numToReplace:
+                    numList[i] = newreplacement
+            
+            smallerNumber = int(''.join(numList))
+        
+        return int(greaterNumber) - int(smallerNumber)
 
-        M = int(convert(num, 0, '9'))
-        m = int(convert(num, 0, '1'))
-        if m == 0:
-            m = int(num)
-        print(M, m)
-        return M - m
+
+        
