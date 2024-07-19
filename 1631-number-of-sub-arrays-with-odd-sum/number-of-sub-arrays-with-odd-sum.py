@@ -1,19 +1,15 @@
 class Solution:
     def numOfSubarrays(self, arr: List[int]) -> int:
-        MOD = 10**9 + 7
-        odd = 0
-        even = 0
-        vk = 0
         ans = 0
-        for num in arr:
-            vk+=num
-            vk%=2
-            if vk==1:
+        even = 1 #(sum zero before array start)
+        odd = 0
+        rsum = 0
+        for i in range(len(arr)):
+            rsum += arr[i]
+            if rsum % 2 == 1:
+                ans += even
                 odd += 1
-                ans += 1+even
             else:
-                even += 1
                 ans += odd
-            ans%=MOD
-        
-        return ans
+                even += 1
+        return ans % (10**9 + 7)
