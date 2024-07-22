@@ -1,7 +1,11 @@
 class Solution:
     def mostCompetitive(self, nums: List[int], k: int) -> List[int]:
-        stack = [] # (increasing) mono-stack 
+        ans, pq = [], []
+        prev = -inf 
         for i, x in enumerate(nums): 
-            while stack and stack[-1] > x and len(stack) + len(nums) - i > k: stack.pop()
-            if len(stack) < k: stack.append(x)
-        return stack 
+            heappush(pq, (x, i))
+            if i+k >= len(nums): 
+                while pq and pq[0][1] < prev: heappop(pq)
+                x, prev = heappop(pq)
+                ans.append(x)
+        return ans 
