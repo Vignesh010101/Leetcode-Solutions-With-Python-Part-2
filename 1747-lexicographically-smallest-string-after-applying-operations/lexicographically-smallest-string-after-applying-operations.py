@@ -1,13 +1,24 @@
 class Solution:
-    def findLexSmallestString(self, s: str, a: int, b: int) -> str:
-        op1 = lambda s: "".join(str((int(c)+a)%10) if i&1 else c for i, c in enumerate(s))
-        op2 = lambda s: s[-b:] + s[:-b]
-        
-        seen = set()
-        stack = [s]
-        while stack: 
-            s = stack.pop()
+       def findLexSmallestString(self, s: str, a: int, b: int) -> str:
+
+        def dfs(s: str) -> str:
+
+            if s in seen: return
+
             seen.add(s)
-            if (ss := op1(s)) not in seen: stack.append(ss)
-            if (ss := op2(s)) not in seen: stack.append(ss)
+            res, odd ='', True
+
+            for ch in s:
+                odd^= True
+                res+= d[ch] if odd else ch
+    
+            dfs(res)
+            dfs(s[b: ] + s[ :b])
+
+
+        d, seen = {ch:str((int(ch) + a) % 10
+                    ) for ch in digits}, set()
+
+        dfs(s)
+
         return min(seen)
