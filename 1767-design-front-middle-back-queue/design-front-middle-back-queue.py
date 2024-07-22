@@ -1,80 +1,115 @@
+class Node:
+    def __init__(self, val = None):
+        self.val = val
+        self.prev = None
+        self.next = None
+
 class FrontMiddleBackQueue:
 
     def __init__(self):
-        self.queue = deque()
-        self.queue2 = deque()
-
+        self.size = 0
+        self.start = Node()
+        self.end = Node()
+        self.mid = self.start
+        self.start.next = self.end
+        self.end.prev = self.start
+        self.posLeft, self.posRight, self.posMiddle = 'left', 'right', 'mid'
 
     def pushFront(self, val: int) -> None:
-        self.queue.appendleft(val)
-
+        node = Node(val)
+        left, right = self.start, self.start.next
+        node.prev, node.next = left, right
+        left.next, right.prev = node, node
+        self.__balanceMid(True, self.posLeft)
 
     def pushMiddle(self, val: int) -> None:
-        if len(self.queue)%2==0:
-            for i in range(len(self.queue)//2):
-                self.queue2.append(self.queue.pop())
-            self.queue.append(val)
-            for i in range(len(self.queue2)):
-                self.queue.append(self.queue2.pop())
-        else:
-            for i in range((len(self.queue)//2)+1):
-                self.queue2.append(self.queue.pop())
-            self.queue.append(val)
-            for i in range(len(self.queue2)):
-                self.queue.append(self.queue2.pop())
-
+        node = Node(val)
+        if self.size & 1: # 1 -> 3 -> 2 => add 4 bofore 3
+            left, right = self.mid.prev, self.mid
+        else: # 1 -> 2 => add 3 after 1
+            left, right = self.mid, self.mid.next
+        
+        node.prev, node.next = left, right
+        left.next, right.prev = node, node
+        self.__balanceMid(True, self.posMiddle)
 
     def pushBack(self, val: int) -> None:
-        self.queue.append(val)
-
-
+        node = Node(val)
+        left, right = self.end.prev, self.end
+        node.prev, node.next = left, right
+        left.next, right.prev = node, node
+        self.__balanceMid(True, self.posRight)
 
     def popFront(self) -> int:
-        if len(self.queue)!=0:
-            return self.queue.popleft()
-        else:
-            return -1
-        
+        if self.isEmpty(): return -1
+        node = self.start.next
+        left, right = node.prev, node.next
+        left.next, right.prev = right, left
+        self.__balanceMid(False, self.posLeft)
+        return node.val
 
     def popMiddle(self) -> int:
-        a = len(self.queue)
-        if a==0:
-            return -1
-        if a%2==0:
-            ans = self.queue[(a//2)-1]
-            for i in range(a//2):
-                self.queue2.append(self.queue.pop())
-            self.queue.pop()
-            for i in range(len(self.queue2)):
-                self.queue.append(self.queue2.pop())
-            return ans
-
-        else:
-            ans = self.queue[(a//2)]
-            for i in range(a//2):
-                self.queue2.append(self.queue.pop())
-            self.queue.pop()
-            for i in range(len(self.queue2)):
-                self.queue.append(self.queue2.pop())
-            return ans
-
-
-    def popBack(self) -> int:
-        if len(self.queue) != 0:
-            return self.queue.pop()
-        else:
-            return -1
+        if self.isEmpty(): return -1
+        node = self.mid
+        left, right = node.prev, node.next
+        left.next, right.prev = right, left
+        self.__balanceMid(False, self.posMiddle)
+        return node.val
         
+    def popBack(self) -> int:
+        if self.isEmpty(): return -1
+        node = self.end.prev
+        left, right = node.prev, node.next
+        left.next, right.prev = right, left
+        self.__balanceMid(False, self.posRight)
+        return node.val
 
+    def isEmpty(self) -> bool:
+        return self.size == 0
 
-# Your FrontMiddleBackQueue object will be instantiated and called as such:
-# obj = FrontMiddleBackQueue()
-# obj.pushFront(val)
-# obj.pushMiddle(val)
-# obj.pushBack(val)
-# param_4 = obj.popFront()
-# param_5 = obj.popMiddle()
-# param_6 = obj.popBack()
+    def __balanceMid(self, isAdd: bool, position: str):
+        if isAdd:
+            self.size += 1
+            match position:
+                case self.posMiddle:
+                    if self.size & 1:
+                        self.mid = self.mid.next
+                    else:
+                        self.mid = self.mid.prev
+                case self.posLeft:
+                    if self.size == 1:
+                        self.mid = self.mid.next
+                    elif self.size & 1 == 0:
+                        self.mid = self.mid.prev 
+                case self.posRight:
+                    if self.size & 1:
+                        self.mid = self.mid.next
+        else:
+            self.size -= 1
+            if self.size == 0:
+                self.mid = self.start
+                return
+            match position:
+                case self.posMiddle:
+                    if self.size & 1:
+                        self.mid = self.mid.next
+                    else:
+                        self.mid = self.mid.prev
+                case self.posLeft:
+                    if self.size & 1:
+                        self.mid = self.mid.next
+                case self.posRight:
+                    if self.size & 1 == 0:
+                        self.mid = self.mid.prev
+        #self.printNodes()
+
+    def printNodes(self):
+        cur = self.start
+        values = []
+        while cur:
+            values.append(cur.val)
+            cur = cur.next
+        print(self.mid.val, [f'{v}' for v in values[1:-1]])
 
 # Your FrontMiddleBackQueue object will be instantiated and called as such:
 # obj = FrontMiddleBackQueue()
