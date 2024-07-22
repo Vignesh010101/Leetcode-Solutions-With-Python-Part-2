@@ -1,15 +1,11 @@
 class Solution:
-    def stoneGameVI(self, a: List[int], b: List[int]) -> int:
-        combines = [(a[i] + b[i], a[i], b[i]) for i in range(len(a))]
-        combines.sort(reverse=True) 
-        bobPoints = sum(b)
-        alicePoints = 0
-        for i in range(0, len(a), 2):
-            alicePoints += combines[i][1]
-            bobPoints -= combines[i][2]
-        if alicePoints > bobPoints:
+    def stoneGameVI(self, alice: List[int], bob: List[int]) -> int:
+        t=list(zip(alice,bob))
+        t=sorted(t,key=lambda x: sum(x),reverse=True)
+        al=sum([i[0] for i in t[::2]])
+        bb=sum([i[1] for i in t[1::2]])
+        if al>bb:
             return 1
-        elif alicePoints < bobPoints:
+        elif al<bb:
             return -1
         return 0
-        
