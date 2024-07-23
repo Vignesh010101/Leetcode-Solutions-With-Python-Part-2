@@ -1,17 +1,34 @@
 class Solution:
-    def findBall(self, grid: List[List[int]]) -> List[int]:
-        r_len = len(grid)
-        c_len = len(grid[0])
-        output = list(range(c_len))
-        
-        for r in range(r_len):
-            for i in range(c_len):
-                c = output[i]
-                if c == -1: continue
-                c_nxt = c + grid[r][c]
-                if c_nxt < 0 or c_nxt >= c_len or grid[r][c_nxt] == -grid[r][c]:
-                    output[i] = -1
-                    continue
-                output[i] += grid[r][c]
-        
-        return output
+    def findBall(self, grid: list[list[int]]) -> list[int]:
+        n, m = len(grid), len(grid[0])
+        ans = [-1] * m
+
+        def isValid(col):
+            return 0 <= col < m
+
+        for i in range(m):
+            row = 0
+            col = i
+
+            while True:
+                if row == n:
+                    ans[i] = col
+                    break
+
+                if grid[row][col] == 1:
+                    # pattern 1 => 1
+                    if isValid(col + 1) and grid[row][col + 1] == 1:
+                        col += 1
+                    else:
+                        break 
+                else:
+                    # pattern -1 <= -1
+                    if isValid(col - 1) and grid[row][col - 1] == -1:
+                        col -= 1
+                    else:
+                        break
+                
+                # a ball continue to fall
+                row += 1
+
+        return ans
