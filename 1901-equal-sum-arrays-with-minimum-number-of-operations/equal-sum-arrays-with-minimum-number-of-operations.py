@@ -1,22 +1,36 @@
 class Solution:
     def minOperations(self, nums1: List[int], nums2: List[int]) -> int:
-        if 6*len(nums1) < len(nums2) or 6*len(nums2) < len(nums1): return -1 # impossible 
-        
-        if sum(nums1) < sum(nums2): nums1, nums2 = nums2, nums1
-        s1, s2 = sum(nums1), sum(nums2)
-            
-        nums1 = [-x for x in nums1]  
-        heapify(nums1)
-        heapify(nums2)
-        
+        M = len(nums1)
+        N = len(nums2)
+
+        if 6 * M < N or 6 * N < M: 
+            return -1
+
+        S1 = sum(nums1)
+        S2 = sum(nums2)
+
+        rem = abs(S1 - S2)
+        if S1 > S2: 
+            nums1, nums2 = nums2, nums1
+
+        diffs = [0] * 6
+        for n in nums1:
+            diffs[6 - n] += 1
+
+        for n in nums2:
+            diffs[n - 1] += 1
+
         ans = 0
-        while s1 > s2: 
-            x1, x2 = nums1[0], nums2[0]
-            if -1-x1 > 6-x2: 
-                s1 += x1 + 1
-                heapreplace(nums1, -1)
-            else: 
-                s2 += 6 - x2
-                heapreplace(nums2, 6)
-            ans += 1
-        return ans 
+        while rem:
+            count = diffs.pop()
+            diff = len(diffs)
+
+            if count * diff >= rem:
+                ans += (rem + diff - 1) // diff
+                return ans
+            else:
+                ans += count
+                rem -= count * diff
+
+        assert rem == 0
+        return ans
