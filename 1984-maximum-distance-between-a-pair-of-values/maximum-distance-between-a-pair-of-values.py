@@ -1,22 +1,14 @@
 class Solution:
     def maxDistance(self, nums1: List[int], nums2: List[int]) -> int:
-        def binary(left, right, num):
-            farthestPos = 0
-            while left < right:
-                mid = (left + right) // 2
-                if nums2[mid] < num:
-                    right = mid
-                else:
-                    farthestPos = max(farthestPos, mid)
-                    left = mid + 1
-            if nums2[left] >= num:
-                farthestPos = max(farthestPos, left)
-            return farthestPos
-        maxDiff = 0
-        for i in range(min(len(nums1), len(nums2))):
-            if nums1[i] > nums2[i]:
-                continue
+        length1, length2 = len(nums1), len(nums2)
+        i,j = 0,0
+        
+        result = 0
+        while i < length1 and j < length2:
+            if nums1[i] > nums2[j]:
+                i+=1
             else:
-                j = binary(i, len(nums2)-1, nums1[i])
-                maxDiff = max(maxDiff, (j-i))
-        return maxDiff
+                result = max(result,j-i)
+                j+=1
+            
+        return result
