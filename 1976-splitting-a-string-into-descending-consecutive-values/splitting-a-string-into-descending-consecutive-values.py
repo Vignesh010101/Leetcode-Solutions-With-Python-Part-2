@@ -1,18 +1,19 @@
 class Solution:
     def splitString(self, s: str) -> bool:
-        
-        def rec(ind , parts , prev):
 
-            if ind == len(s):
-                return parts >= 2
+        def backtrack(index,prev):
+            if index == len(s):
+                return True
 
-            for i in range(ind , len(s)):
-                num = int(s[ind : i + 1])
-
-                if prev == -10000 or num == prev - 1:
-                    if rec(i + 1 , parts + 1 , num):
-                        return True
-            
+            for j in range(index,len(s)):
+                val = int(s[index:j+1])
+                if val + 1 == prev and backtrack(j+1,val):
+                    return True
             return False
 
-        return rec(0 , 0 , -10000)
+        for i in range(len(s)-1):
+            val = int(s[:i+1])
+            if backtrack(i+1,val) : return True
+
+        return False
+        
