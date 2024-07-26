@@ -1,24 +1,35 @@
 class Solution:
     def largestMagicSquare(self, grid: List[List[int]]) -> int:
-        m, n = len(grid), len(grid[0]) # dimensions 
-        rows = [[0]*(n+1) for _ in range(m)] # prefix sum along row
-        cols = [[0]*n for _ in range(m+1)] # prefix sum along column
+        m = len(grid)
+        n = len(grid[0])
         
-        for i in range(m):
-            for j in range(n): 
-                rows[i][j+1] = grid[i][j] + rows[i][j]
-                cols[i+1][j] = grid[i][j] + cols[i][j]
-        
-        ans = 1
-        for i in range(m): 
-            for j in range(n): 
-                diag = grid[i][j]
-                for k in range(min(i, j)): 
-                    ii, jj = i-k-1, j-k-1
-                    diag += grid[ii][jj]
-                    ss = {diag}
-                    for r in range(ii, i+1): ss.add(rows[r][j+1] - rows[r][jj])
-                    for c in range(jj, j+1): ss.add(cols[i+1][c] - cols[ii][c])
-                    ss.add(sum(grid[ii+kk][j-kk] for kk in range(k+2))) # anti-diagonal
-                    if len(ss) == 1: ans = max(ans, k+2)
-        return ans   
+        rowPrefixSum = [[0] * (n + 1) for r in range(m)]
+        for r in range(m):
+            for c in range(n):
+                rowPrefixSum[r][c + 1] = rowPrefixSum[r][c] + grid[r][c]
+                        
+        columnPrefixSum = [[0] * (m + 1) for c in range(n)]
+        for c in range(n):
+            for r in range(m):
+                columnPrefixSum[c][r + 1] = columnPrefixSum[c][r] + grid[r][c]
+
+        k = min(m, n)
+        while 1 < k:
+            for r in range(m - k + 1):
+                for c in range(n - k + 1):
+                    z = rowPrefixSum[r][c + k] - rowPrefixSum[r][c]
+                    ok = 1
+                    for i in range(k):
+                        if z != rowPrefixSum[r + i][c + k] - rowPrefixSum[r + i][c] or z != columnPrefixSum[c + i][r + k] - columnPrefixSum[c + i][r]:
+                            ok = 0
+                            break
+                    if ok:
+                        diagZ1 = 0
+                        diagZ2 = 0
+                        for i in range(k):
+                            diagZ1 += grid[r + i][c + i]
+                            diagZ2 += grid[r + i][c + k - i - 1]
+                        if z == diagZ1 == diagZ2:
+                            return k
+            k -= 1
+        return 1
