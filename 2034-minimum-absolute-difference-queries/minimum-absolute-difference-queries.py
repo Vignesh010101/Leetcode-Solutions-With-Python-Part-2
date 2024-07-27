@@ -1,16 +1,23 @@
 class Solution:
     def minDifference(self, nums: List[int], queries: List[List[int]]) -> List[int]:
-        loc = {}
-        for i, x in enumerate(nums): loc.setdefault(x, []).append(i)
-        keys = sorted(loc)
+        idx = defaultdict(list)
+        for i, num in enumerate(nums):
+            idx[num].append(i)
+        idx = dict(sorted(idx.items()))
         
-        ans = []
-        for l, r in queries: 
-            prev, val = 0, inf
-            for x in keys: 
-                i = bisect_left(loc[x], l)
-                if i < len(loc[x]) and loc[x][i] <= r: 
-                    if prev: val = min(val, x - prev)
-                    prev = x 
-            ans.append(val if val < inf else -1)
-        return ans
+        res = [0] * len(queries)
+        for i, (s, t) in enumerate(queries):
+            prev = 0
+            min_diff = inf
+            for num, idx_list in idx.items():
+                ns = bisect_left(idx_list, s)
+                nt = bisect_right(idx_list, t, lo=ns)
+                if ns < nt <= len(idx_list):
+                    if prev: 
+                        min_diff = min(min_diff, num-prev)
+                        if min_diff == 1:
+                            break
+                    prev = num
+            res[i] = min_diff if min_diff != inf else -1
+        return res
+        
