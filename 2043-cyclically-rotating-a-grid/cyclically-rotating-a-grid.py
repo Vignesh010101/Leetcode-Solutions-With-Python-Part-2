@@ -1,22 +1,21 @@
 class Solution:
     def rotateGrid(self, grid: List[List[int]], k: int) -> List[List[int]]:
-  
-        m, n = len(grid), len(grid[0])
-        MN = min(m, n)//2
- 
-        for i in range(MN):
-
-            XO, X1, YO, Y1 = i, m-i-1, i, n-i-1
-            rot  = k%(2*(X1+Y1-XO-YO))      
-
-            layerXY = list(chain( [(XO, y) for y in range(YO,  Y1)],
-                                  [(x, Y1) for x in range(XO,  X1)],
-                                  [(X1, y) for y in range(YO+1,Y1+1)][::-1],
-                                  [(x, YO) for x in range(XO+1,X1+1)][::-1]))
-
-            layer = [grid[a][b] for (a,b) in layerXY]
-            layer = zip(layer[rot:]+layer[:rot], layerXY)
-
-            for num, (a,b) in layer: grid[a][b] = num
-
+        m, n = len(grid), len(grid[0]) # dimensions 
+        
+        for r in range(min(m, n)//2): 
+            i = j = r
+            vals = []
+            for jj in range(j, n-j-1):     vals.append(grid[i][jj])
+            for ii in range(i, m-i-1):     vals.append(grid[ii][n-j-1])
+            for jj in range(n-j-1, j, -1): vals.append(grid[m-i-1][jj])
+            for ii in range(m-i-1, i, -1): vals.append(grid[ii][j])
+                
+            kk = k % len(vals)
+            vals = vals[kk:] + vals[:kk]
+            
+            x = 0  
+            for jj in range(j, n-j-1):     grid[i][jj] = vals[x]; x += 1
+            for ii in range(i, m-i-1):     grid[ii][n-j-1] = vals[x]; x += 1
+            for jj in range(n-j-1, j, -1): grid[m-i-1][jj] = vals[x]; x += 1
+            for ii in range(m-i-1, i, -1): grid[ii][j] = vals[x]; x += 1
         return grid
