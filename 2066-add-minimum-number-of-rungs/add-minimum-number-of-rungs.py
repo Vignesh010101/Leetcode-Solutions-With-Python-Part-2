@@ -1,3 +1,9 @@
 class Solution:
     def addRungs(self, rungs: List[int], dist: int) -> int:
-        return sum((a - b - 1) // dist for a, b in zip(rungs, [0] + rungs))
+        prev = 0
+        gaps = 0
+        for rung in rungs:
+            if rung-prev > dist:
+                gaps += (rung-prev-1)//dist
+            prev = rung
+        return gaps
