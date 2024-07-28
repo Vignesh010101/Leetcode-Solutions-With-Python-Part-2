@@ -1,22 +1,23 @@
 class Solution:
     def maxPoints(self, points: List[List[int]]) -> int:
-        n = len(points)
-        m = len(points[0])
-        prev = points[0]
-        for i in range(1, n):
-            maxer = None
-            new = [0]*m
-            for j in range(m):
-                if not maxer or maxer <= prev[j]:
-                    maxer = prev[j]
-                new[j] = maxer+points[i][j]
-                maxer -= 1
-            maxer = None
-            for j in range(m-1,-1,-1):
-                if not maxer or maxer <= prev[j]:
-                    maxer = prev[j]
-                new[j] = max(new[j],maxer+points[i][j])
-                maxer -= 1
-            # print(prev, new)
-            prev = list(new)
-        return max(prev)
+        def goright(row): 
+            for i in range(1, len(row)):
+                if row[i-1] - 1 > row[i]: 
+                    row[i] = row[i-1]-1
+
+        def goleft(row): 
+            for i in range(len(row)-2, -1, -1):
+                if row[i+1]-1 > row[i]:
+                    row[i] = row[i+1]-1
+
+        goright(points[0])
+        goleft(points[0])
+
+        res = 0
+        for i in range(1, len(points)):
+            for j in range(len(points[i])):
+                points[i][j] += points[i-1][j]
+            goright(points[i])
+            goleft(points[i])
+
+        return max(points[-1])
