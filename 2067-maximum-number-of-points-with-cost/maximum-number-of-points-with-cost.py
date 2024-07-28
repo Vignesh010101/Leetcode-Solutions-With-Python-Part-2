@@ -1,16 +1,22 @@
 class Solution:
     def maxPoints(self, points: List[List[int]]) -> int:
-        # Instead checking all possibilities, adjust upper row with max possible in each cell
-        m, n = len(points), len(points[0])
-        for i in range(1, m):
-            # Spread upper row with max possible
-            # Spread from left to right
-            for j in range(1, n):
-                points[i-1][j] = max(points[i-1][j], points[i-1][j-1]-1)
-            # Spread from right to left
-            for j in range(n-2, -1, -1):
-                points[i-1][j] = max(points[i-1][j], points[i-1][j+1]-1)
-            # Sum with upper row
-            for j in range(n):
-                points[i][j] += points[i-1][j]
-        return max(points[m-1])
+        n = len(points)
+        m = len(points[0])
+        prev = points[0]
+        for i in range(1, n):
+            maxer = None
+            new = [0]*m
+            for j in range(m):
+                if not maxer or maxer <= prev[j]:
+                    maxer = prev[j]
+                new[j] = maxer+points[i][j]
+                maxer -= 1
+            maxer = None
+            for j in range(m-1,-1,-1):
+                if not maxer or maxer <= prev[j]:
+                    maxer = prev[j]
+                new[j] = max(new[j],maxer+points[i][j])
+                maxer -= 1
+            # print(prev, new)
+            prev = list(new)
+        return max(prev)
