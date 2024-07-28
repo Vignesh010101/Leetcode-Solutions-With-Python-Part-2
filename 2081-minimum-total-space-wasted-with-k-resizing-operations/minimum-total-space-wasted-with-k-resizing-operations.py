@@ -1,27 +1,17 @@
 class Solution:
     def minSpaceWastedKResizing(self, nums: List[int], k: int) -> int:
-        n = len(nums)
         
         @cache
-        def rec(pos, c):
-            if pos==n:
-                return 0
-            elif c==0:
-                m = max(nums[pos:])
-                s = sum(nums[pos:])
-                return m*(n-pos)-s
-
-            ret = float('inf')
-            m = nums[pos]
-            s = 0
-            for i in range(pos, n):
-                m = max(m, nums[i])
-                s += nums[i]
-                ret = min(ret, m*(i-pos+1)-s + rec(i+1, c-1))
-            return ret
-
-        return rec(0, k)
-
-
-
-                
+        def fn(i, k): 
+            """Return min waste from i with k ops."""
+            if i == len(nums): return 0
+            if k < 0: return inf 
+            ans = inf
+            rmx = rsm = 0
+            for j in range(i, len(nums)): 
+                rmx = max(rmx, nums[j])
+                rsm += nums[j]
+                ans = min(ans, rmx*(j-i+1) - rsm + fn(j+1, k-1))
+            return ans 
+        
+        return fn(0, k)
