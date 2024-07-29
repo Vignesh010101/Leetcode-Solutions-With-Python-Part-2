@@ -1,13 +1,3 @@
 class Solution:
-    def numberOfWeakCharacters(self, properties: List[List[int]]) -> int:
-        properties.sort(key=lambda x:(-x[0],x[1]))
-        mxattack=properties[0][0]
-        mxdefense=properties[0][1]
-        count=0
-        for i in range(1,len(properties)):
-            if properties[i][0]<mxattack and properties[i][1]<mxdefense:
-                count+=1
-            else:
-                mxattack=properties[i][0]
-                mxdefense=properties[i][1]
-        return count
+    def numberOfWeakCharacters(self, p: List[List[int]]) -> int:
+        return (m:=1) and sum((d<m,m:=max(m,d))[0] for _,d in sorted(p,key=lambda q:(-q[0],q[1])))
