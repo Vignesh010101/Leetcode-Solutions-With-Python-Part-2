@@ -1,14 +1,40 @@
+from typing import List
+import bisect
+
 class Solution:
     def numTeams(self, rating: List[int]) -> int:
-        dp = []
-        for i in range(len(rating)):
-            dp.append([0, 0, 0, 0])
-        for i in range(len(rating) - 1, -1, -1):
-            for j in range(i + 1, len(rating)):
-                if rating[j] < rating[i]:
-                    dp[i][1] += dp[j][0]
-                    dp[i][0] += 1
-                elif rating[j] > rating[i]:
-                    dp[i][3] += dp[j][2]
-                    dp[i][2] += 1
-        return sum([dp[i][1] + dp[i][3] for i in range(len(dp))])      
+        l = []
+        sr = sorted(rating)
+        low = {}
+        for idx, r in enumerate(sr):
+            low[r] = idx
+        res = 0
+        n = len(rating)
+        for idx, r in enumerate(rating):
+            i = bisect.bisect(l, r)
+            l.insert(i, r)
+            j = low[r] - i
+            res += i * (n - 1 - idx - j) + j * (idx - i)
+        return res
+
+    def numTeams2(self, rating: List[int]) -> int:
+        ans, n = 0, len(rating)
+        for j in range(n):
+            llt, lgt = 0, 0
+            for i in range(j):
+                llt += rating[i] < rating[j]
+                lgt += rating[i] > rating[j]
+            rlt, rgt = 0, 0
+            for k in range(j + 1, n):
+                rlt += rating[k] < rating[j]
+                rgt += rating[k] > rating[j]
+            ans += llt * rgt + lgt * rlt
+        return ans
+
+    def numTeams1(self, rating: List[int]) -> int:
+        ans, n = 0, len(rating)
+        for i in range(n):
+            for j in range(i + 1, n):
+                for k in range(j + 1, n):
+                    ans += 1 if rating[i] < rating[j] < rating[k] or rating[i] > rating[j] > rating[k] else 0
+        return ans
