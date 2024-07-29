@@ -1,31 +1,29 @@
-from heapq import *
-
 class Solution:
     def countPaths(self, n: int, roads: List[List[int]]) -> int:
-        adj_list = defaultdict(list)
-        for i, j, k in roads:
-            adj_list[i].append((j, k))
-            adj_list[j].append((i, k))
-
-        start = 0
-        end = n - 1
-
-        min_dist = {i: [float('inf'), 0] for i in adj_list.keys()}
-        min_dist[start] = [0, 1]
-
-        heap = [(0, start)]
-        while heap:
-            elapsed_time, node = heappop(heap)
-            if elapsed_time > min_dist[end][0]:
-                break
-            for neighbor, time in adj_list[node]:
-                if (elapsed_time + time) > min_dist[neighbor][0]:
-                    continue
-                elif (elapsed_time + time) == min_dist[neighbor][0]:
-                    min_dist[neighbor][1] += min_dist[node][1]
-                else:
-                    min_dist[neighbor][0] = elapsed_time + time
-                    min_dist[neighbor][1] = min_dist[node][1]
-                    heappush(heap, (elapsed_time + time, neighbor))
-
-        return min_dist[end][1] % (pow(10, 9) + 7)
+        graph = {}
+        for u, v, time in roads: 
+            graph.setdefault(u, {})[v] = time
+            graph.setdefault(v, {})[u] = time
+            
+        dist = [inf]*n
+        dist[-1] = 0
+        stack = [(n-1, 0)]
+        while stack: 
+            x, t = stack.pop()
+            if t == dist[x]: 
+                for xx in graph.get(x, {}): 
+                    if t + graph[x][xx] < dist[xx]: 
+                        dist[xx] = t + graph[x][xx]
+                        stack.append((xx, t + graph[x][xx]))
+                        
+        @cache
+        def fn(x):
+            """Return """
+            if x == n-1: return 1 
+            if dist[x] == inf: return 0 
+            ans = 0 
+            for xx in graph.get(x, {}): 
+                if graph[x][xx] + dist[xx] == dist[x]: ans += fn(xx)
+            return ans % 1_000_000_007
+        
+        return fn(0)
