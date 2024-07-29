@@ -1,6 +1,9 @@
+import numpy as np
+
 class Solution:
     def minOperations(self, grid: List[List[int]], x: int) -> int:
-        vals = [x for row in grid for x in row]
-        if len(set(val%x for val in vals)) > 1: return -1 
-        median = sorted(vals)[len(vals)//2] 
-        return sum(abs(val - median)//x for val in vals)
+        grid = np.array(grid, dtype=int).reshape(-1)
+
+        if 0 != np.ptp(np.mod(grid, x)):
+            return -1
+        return int(np.abs(grid - np.median(grid)).sum() / x)
