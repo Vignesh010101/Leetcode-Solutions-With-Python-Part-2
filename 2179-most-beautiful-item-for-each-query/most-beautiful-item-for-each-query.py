@@ -1,11 +1,13 @@
 class Solution:
     def maximumBeauty(self, items: List[List[int]], queries: List[int]) -> List[int]:
-        items.sort()
-        ans = [0]*len(queries)
-        prefix = ii = 0 
-        for x, i in sorted((x, i) for i, x in enumerate(queries)): 
-            while ii < len(items) and items[ii][0] <= x: 
-                prefix = max(prefix, items[ii][1])
-                ii += 1
-            ans[i] = prefix
-        return ans 
+        pareto = [] 
+        for price, beauty in sorted(items, key = lambda x : x[0] * 10**10 - x[1]):
+            if not pareto or beauty > pareto[-1][1]:
+                pareto.append(( price, beauty ))
+            
+        for q in queries:
+            pos = bisect_right(pareto, ( q + 1, 0 )) - 1
+            if pos >= 0:
+                yield pareto[pos][1]
+            else:
+                yield 0
