@@ -1,31 +1,14 @@
 class Solution:
     def minimumDeletions(self, nums: List[int]) -> int:
-        si = nums.index(min(nums))  
-        li = nums.index(max(nums))
-        if si < li:
-            if si < len(nums) - li - 1:
-                sum = si + 1
-                if li - si < len(nums) - li - 1:
-                    sum += li - si
-                else:
-                    sum += len(nums) - li
-            else:
-                sum = len(nums) - li
-                if si < li - si - 1:
-                    sum += si + 1
-                else:
-                    sum += li - si
-        else:
-            if li < len(nums) - si - 1:
-                sum = li + 1
-                if si - li < len(nums) - si - 1:
-                    sum += si - li
-                else:
-                    sum += len(nums) - si
-            else:
-                sum = len(nums) - si
-                if li < si - li - 1:
-                    sum += li + 1
-                else:
-                    sum += si - li
-        return sum
+        minp, maxp, minel, maxel, L = 0, 0, float('inf'), float('-inf'), len(nums)
+        for i, n in enumerate(nums):
+            if n > maxel:
+                maxel = n
+                maxp = i
+            if n < minel:
+                minel = n
+                minp = i
+        
+        left, right = min(minp, maxp), max(minp, maxp)
+
+        return min(right + 1, L - left, left + 1 + (L - right))
