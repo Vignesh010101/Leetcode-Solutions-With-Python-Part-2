@@ -1,17 +1,22 @@
 class Solution:
     def minimumOperations(self, nums: List[int], start: int, goal: int) -> int:
-        ans = 0
-        seen = {start}
-        queue = deque([start])
-        while queue: 
-            for _ in range(len(queue)): 
-                val = queue.popleft()
-                if val == goal: return ans 
-                if 0 <= val <= 1000: 
-                    for x in nums: 
-                        for op in (add, sub, xor): 
-                            if op(val, x) not in seen: 
-                                seen.add(op(val, x))
-                                queue.append(op(val, x))
-            ans += 1
-        return -1 
+        n = len(nums)
+        que = [start]
+        steps = 0
+        visited = set()
+        while que:
+            # print(que)
+            nxt = []
+            for x in que:
+                if x == goal:
+                    return steps
+                if x in visited or x < 0 or x > 1000:
+                    continue
+                visited.add(x)
+                for i in range(n):
+                    nxt.append(x + nums[i]) 
+                    nxt.append(x - nums[i])
+                    nxt.append(x ^ nums[i]) 
+            steps += 1
+            que = nxt
+        return -1
