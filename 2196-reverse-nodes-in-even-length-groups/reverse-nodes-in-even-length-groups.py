@@ -1,37 +1,43 @@
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
 class Solution:
+
+    def getKth(self, cur, k):
+        cnt = k
+        while cur and cur.next and  k > 0:
+            cur = cur.next
+            k -= 1
+        return [cur, cnt - k]
+
     def reverseEvenLengthGroups(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        connector = None
-        curr = head
-        group_count = 1
-        count = 1
+        dummy = ListNode(0, head)
+        groupPrev = dummy
 
-        def reverse_between(pre, n):
-            start = pre.next
-            then = start.next
-            after = start
+        k = 1
+        while groupPrev and groupPrev.next:
+            kth, newK = self.getKth(groupPrev, k)
+            k = newK
+            groupNext = kth.next
 
-            for _ in range(n - 1):
-                start.next = then.next
-                then.next = pre.next
-                pre.next = then
-                then = start.next
+            if k%2:
+                groupPrev = kth
+            else:
+                prev, curr = kth.next, groupPrev.next
+                while curr and curr != groupNext:
+                    # storing for future use
+                    nxt = curr.next
 
-            return after
+                    # pointing to the prev ptr
+                    curr.next = prev
 
-        while curr:
-            if group_count == count or not curr.next:
-                if count % 2 == 0:
-                    curr = reverse_between(connector, count)
-                connector = curr
-                group_count += 1
-                count = 0
-
-            count += 1
-            curr = curr.next
-
-        return head
+                    # updating the ptr's
+                    prev = curr
+                    curr = nxt
+                tmp = groupPrev.next
+                groupPrev.next = kth
+                groupPrev = tmp
+            k += 1
+        return dummy.next
