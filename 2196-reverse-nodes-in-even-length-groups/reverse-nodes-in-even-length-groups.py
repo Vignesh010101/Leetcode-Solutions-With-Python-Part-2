@@ -1,43 +1,77 @@
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
-
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
 class Solution:
+    def getlen(self, head: Optional[ListNode]) -> int:
+        itr = head
+        c = 0
+        while itr:
+            c += 1
+            itr = itr.next
+        
+        return c
 
-    def getKth(self, cur, k):
-        cnt = k
-        while cur and cur.next and  k > 0:
-            cur = cur.next
-            k -= 1
-        return [cur, cnt - k]
+    def reverse(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        prev = None
+        curr = head
+        last = None
+        while curr:
+            n = curr.next
+            if n is None:
+                last = curr
+            curr.next = prev
+            prev = curr
+            curr = n
+        head = prev
+        itr = head
+        while itr.next:
+            itr = itr.next
+        return [head, itr]
 
     def reverseEvenLengthGroups(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode(0, head)
-        groupPrev = dummy
-
-        k = 1
-        while groupPrev and groupPrev.next:
-            kth, newK = self.getKth(groupPrev, k)
-            k = newK
-            groupNext = kth.next
-
-            if k%2:
-                groupPrev = kth
+        count = 1
+        itr = head
+        last = head
+        length = self.getlen(head)
+        while itr and length-count >= 0:
+            if count % 2 == 0:
+                first=itr
+                last.next = None
+                temp = 1
+                while temp < count:
+                    temp += 1
+                    itr = itr.next
+                else:
+                    nxt = itr.next
+                    itr.next = None
+                    m, n = self.reverse(first)
+                    last.next = m
+                    n.next = nxt
+                    last = n
+                    itr = nxt
+                length -= count
+                count += 1
             else:
-                prev, curr = kth.next, groupPrev.next
-                while curr and curr != groupNext:
-                    # storing for future use
-                    nxt = curr.next
-
-                    # pointing to the prev ptr
-                    curr.next = prev
-
-                    # updating the ptr's
-                    prev = curr
-                    curr = nxt
-                tmp = groupPrev.next
-                groupPrev.next = kth
-                groupPrev = tmp
-            k += 1
-        return dummy.next
+                if count == 1:
+                    itr = itr.next
+                    length -= count
+                    count += 1
+                else:
+                    temp = 1
+                    while temp <= count:
+                        if temp == count-1:
+                            last = itr.next
+                        itr = itr.next
+                        temp += 1
+                    length -= count
+                    count += 1
+        
+        if itr is not None:
+            if length % 2 == 0:
+                m, n = self.reverse(itr)
+                last.next = m
+                n.next = None
+    
+        return head
