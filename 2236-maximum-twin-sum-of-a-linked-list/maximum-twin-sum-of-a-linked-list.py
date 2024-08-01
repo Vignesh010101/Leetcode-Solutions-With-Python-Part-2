@@ -5,19 +5,23 @@
 #         self.next = next
 class Solution:
     def pairSum(self, head: Optional[ListNode]) -> int:
-        temp,c=head,0
-        while temp:
-            c+=1
-            temp=temp.next
-        temp,n=head,c//2
-        a=[]
-        while n!=0:
-            a.append(temp.val)
-            temp=temp.next
-            n-=1
-        n,m=c//2-1,0
-        while temp:
-            m=max(temp.val+a[n],m)
-            temp=temp.next
-            n-=1
-        return m
+        # Initialize slow and fast pointers to head
+        slow = fast = head
+        # Initialize prev to None
+        prev = None
+        # Find middle of linked list using fast and slow pointer approach
+        while fast and fast.next:
+            fast = fast.next.next
+            temp = slow.next
+            # Reverse first half of linked list while traversing it
+            slow.next = prev
+            prev = slow
+            slow = temp
+            
+        res = 0
+        # Compare values of first and second half of linked list to find maximum twin sum
+        while slow and prev:
+            res = max(slow.val + prev.val, res)
+            slow = slow.next
+            prev = prev.next
+        return res
