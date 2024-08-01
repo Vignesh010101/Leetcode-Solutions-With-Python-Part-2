@@ -1,33 +1,25 @@
-from typing import List
-import collections
-
 class Solution:
     def maximumDetonation(self, bombs: List[List[int]]) -> int:
-        n2nxt = collections.defaultdict(set)
-        lb = len(bombs)
-
-        for i in range(lb):  # i is the source
-            xi, yi, ri = bombs[i]
-
-            for j in range(lb):
-                if i == j:
-                    continue
-
-                xj, yj, rj = bombs[j]
-
-                if ri ** 2 >= (xi - xj) ** 2 + (yi - yj) ** 2:  # reachable from i
-                    n2nxt[i].add(j)
-
-        def dfs(n, seen):  # return None
-            if n in seen:
-                return
-            seen.add(n)
-            for nxt in n2nxt[n]:
-                dfs(nxt, seen)
-
-        ans = 0
-        for i in range(lb):
-            seen = set()
-            dfs(i, seen)
-            ans = max(ans, len(seen))
-        return ans
+        graph = [[] for _ in bombs]
+        for i, (xi, yi, ri) in enumerate(bombs): 
+            for j, (xj, yj, rj) in enumerate(bombs): 
+                if i < j: 
+                    dist2 = (xi-xj)**2 + (yi-yj)**2
+                    if dist2 <= ri**2: graph[i].append(j)
+                    if dist2 <= rj**2: graph[j].append(i)
+        
+        def fn(x):
+            """Return connected components of x."""
+            ans = 1
+            seen = {x}
+            stack = [x]
+            while stack: 
+                u = stack.pop()
+                for v in graph[u]: 
+                    if v not in seen: 
+                        ans += 1
+                        seen.add(v)
+                        stack.append(v)
+            return ans 
+        
+        return max(fn(x) for x in range(len(bombs)))
