@@ -1,40 +1,33 @@
+from typing import List
+import collections
+
 class Solution:
     def maximumDetonation(self, bombs: List[List[int]]) -> int:
+        n2nxt = collections.defaultdict(set)
+        lb = len(bombs)
 
-        def is_connected(a,b):
-            x1, y1, r1 = bombs[a]
-            x2, y2, r2 = bombs[b]
-            dist = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-            return dist <= r1
+        for i in range(lb):  # i is the source
+            xi, yi, ri = bombs[i]
 
+            for j in range(lb):
+                if i == j:
+                    continue
 
-        conn = collections.defaultdict(list)
-        for i in range(len(bombs)):
-            for j in range(len(bombs)):
-                if i != j:
-                    if is_connected(i,j):
-                        conn[i].append(j)
-              
-                    
-        def dfs(node):
+                xj, yj, rj = bombs[j]
 
-            if node in visited:
-                return 0
+                if ri ** 2 >= (xi - xj) ** 2 + (yi - yj) ** 2:  # reachable from i
+                    n2nxt[i].add(j)
 
-            visited.add(node)
-            
-            ans = 1
+        def dfs(n, seen):  # return None
+            if n in seen:
+                return
+            seen.add(n)
+            for nxt in n2nxt[n]:
+                dfs(nxt, seen)
 
-            if node in conn:
-                for child in conn[node]:
-                    if child in visited:
-                        continue
-                    ans += dfs(child)
-            
-            return ans 
-
-        maxCount = 1
-        for node in conn:
-            visited = set()
-            maxCount = max(maxCount, dfs(node))
-        return maxCount
+        ans = 0
+        for i in range(lb):
+            seen = set()
+            dfs(i, seen)
+            ans = max(ans, len(seen))
+        return ans
