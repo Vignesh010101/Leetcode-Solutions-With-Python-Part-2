@@ -1,4 +1,16 @@
 class Solution:
     def findLonely(self, nums: List[int]) -> List[int]:
-        m = Counter(nums)
-        return [n for n in nums if m[n] == 1 and m[n - 1] + m[n + 1] == 0]
+        num_set=set(nums)
+        a=[]
+        for i in range(len(nums)):
+            if nums[i]-1 in num_set or nums[i]+1 in num_set:
+                pass
+            else:
+                a.append(nums[i])
+        c=Counter(a)
+        d=list(c.items())
+        x=[]
+        for i in range(len(d)):
+            if d[i][1]==1:
+                x.append(d[i][0])
+        return x
