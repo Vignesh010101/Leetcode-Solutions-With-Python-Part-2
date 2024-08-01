@@ -1,26 +1,22 @@
 class Solution:
     def getDescentPeriods(self, prices: List[int]) -> int:
-        dp=[]
-        for i in range(1,len(prices)):
-            if(prices[i]-prices[i-1]==-1):
-                dp.append(1)
+        if len(prices) == 1:
+            return 1
+        sol, rem, after, not_visited = 0, 0, 0, True
+        for i in range(len(prices)-1):
+            if prices[i] - prices[i+1] == 1:
+                rem += 1
+                not_visited = False
             else:
-                dp.append(0)
-        c=[]
-        res=0
-        count=0
-        for i in range(len(dp)):
-            if(dp[i]==1):
-                count+=1
-            else:
-                c.append(count)
-                count=0
-        c.append(count)
-        for i in c:
-            if(i==1):
-                res+=1
-            else:
-                res+=(i*(i+1))//2
-        res+=len(prices)
-        return(res)
-            
+                if rem >= 1:
+                    rem += 1
+                    sol += ((rem * (rem + 1)) // 2)
+                else:
+                    after += 1
+                rem = 0
+        if rem >= 1: 
+            rem += 1
+            sol += ((rem * (rem + 1)) // 2)
+        if len(prices) >= 2 and prices[-2] - prices[-1] != 1:
+            after += 1 
+        return sol + after
