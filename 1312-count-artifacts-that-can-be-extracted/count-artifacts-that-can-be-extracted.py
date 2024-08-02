@@ -1,8 +1,19 @@
 class Solution:
-    def digArtifacts(self, n: int, artifacts: List[List[int]], dig: List[List[int]]) -> int:
-        dig = set((r, c) for r, c in dig)
-        ans = 0
-        for r0, c0, r1, c1 in artifacts:
-            if all((r, c) in dig for r in range(r0, r1 + 1) for c in range(c0, c1 + 1)):
-                ans += 1
-        return ans
+    def digArtifacts(self, n, artifacts, dig):
+
+        #turn dig into set for easy (constant time) lookup later
+        dig = set((r,c) for r,c in dig)
+
+        count =0
+        #check each position of the artifact
+        for r1,c1, r2,c2 in artifacts:
+            positions = set()
+            for r in range(r1, r2+1):
+                for c in range(c1, c2+1):
+                    positions.add((r,c))
+
+            #if all positions are dug up, add to result
+            if all([pos in dig for pos in positions]):
+                count+=1
+
+        return count
