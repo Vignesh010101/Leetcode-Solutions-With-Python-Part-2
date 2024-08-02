@@ -1,34 +1,35 @@
 class Solution:
     def maximumBobPoints(self, numArrows: int, aliceArrows: List[int]) -> List[int]:
-        
-        dp = {(0, 0): (0, numArrows), (0, aliceArrows[1] + 1): (1, numArrows - (aliceArrows[1] + 1))}
-        
-        for i in range(2, 12):
-            prev = dp
-            dp = {}
+        result = [0]*12
+        ans = 0
+        S = [0]
+        for i in range(12):
+            S.append(S[-1] + i)
+
+        def dfs(idx, path, left, score):
+            nonlocal ans, result
             
-            for key in prev:
-                newkey1 = list(key)
-                newkey1.append(0)
-                score, arrowleft = prev[key]
-                
-                newval1 = (score, arrowleft)
-                dp[tuple(newkey1)] = newval1
-                
-                if arrowleft >= aliceArrows[i] + 1:
-                    newkey2 = list(key)
-                    newkey2.append(aliceArrows[i] + 1)
-                    newval2 = (score + i, arrowleft - (aliceArrows[i] + 1))
-                    dp[tuple(newkey2)] = newval2
+            if score+S[idx+1] < ans:
+                return
+
+            if idx == -1 or left == 0:
+                if score > ans:
+                    result = path[:]
+                    # add remaining arrows
+                    result[0] += left
+                    ans = score
+                return
+            
+            # bob wins
+            if left > aliceArrows[idx]:
+                path[idx] = aliceArrows[idx]+1
+                dfs(idx-1, path, left-aliceArrows[idx]-1, score+idx)
+                path[idx] = 0
+            
+            # alice wins
+            dfs(idx-1, path, left, score)
+
+        path = [0]*12
+        dfs(11, path, numArrows, 0)
         
-        maxscore, res = 0, None
-        for key in dp:
-            score, _ = dp[key]
-            if score > maxscore:
-                maxscore = score
-                res = list(key)
-        
-        if sum(res) < numArrows:
-            res[0] = numArrows - sum(res)
-        
-        return res
+        return result
