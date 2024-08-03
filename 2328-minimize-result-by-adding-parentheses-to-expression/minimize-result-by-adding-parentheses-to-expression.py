@@ -1,67 +1,50 @@
 class Solution:
-    def minimizeResult(self, expression: str) -> str:
-        res = {}
-        addPos = expression.index('+')
-        for i in range(len(expression)):
-            if i >= addPos: break
-            for j in range(i+1, len(expression)):
-                if j <= addPos: continue
-                newEx = expression[:i]+'('+expression[i:j+1]+')'+expression[j+1:]
-                ans = self.calculate(newEx)
-                res[ans] = newEx
-        return res[min(res)]
-    def str2int(self, arr):
-        return int(''.join([str(ch) for ch in arr]))
-    def calculate(self, ex):
-        digits = []
-        mulStack = []
-        addStack = []
-        i = 0
-        L = len(ex)
-        while i < L:
-            c = ex[i]
-            if c.isdigit():
-                digits.append(c)
+    def minimizeResult(self, exp: str) -> str:
+        x,y=exp.split('+')
+        maxx=int(x)+int(y)
+        # print(maxx)
+        exp=list(exp)
+        plus=exp.index('+')
+        
+        lhs=[]
+        ans=''
+        for j in range(0,plus):
+            if not j:
+                left=1
+                bleft=int(''.join(exp[:plus]))
             else:
-                if c == '(':
-                    if digits:
-                        mulStack.append(self.str2int(digits))
-                        digits = []
-                    subAddStack = []
-                    subDigits = []
-                    j = i+1
-                    while ex[j] != ')':
-                        if ex[j].isdigit():
-                            subDigits.append(ex[j])
-                        else: # +
-                            thisNum = self.str2int(subDigits)
-                            subAddStack.append(thisNum)
-                            subDigits = []
-                        j += 1
-                    if subDigits:
-                        subAddStack.append(self.str2int(subDigits))
-                    num = sum(subAddStack)
-                    mulStack.append(num)
-                    i = j
-                elif c == '+':
-                    num = 1
-                    if digits:
-                        num = self.str2int(digits)
-                        digits = []
-                    if mulStack:
-                        for p in mulStack:
-                            num *= p
-                        mulStack = []
-                    addStack.append(num)
-            i += 1
-        if not digits and not mulStack: return sum(addStack)
-        num = 1
-        if digits:
-            num = self.str2int(digits)
-            digits = []
-        if mulStack:
-            for p in mulStack:
-                num *= p
-            mulStack = []
-        addStack.append(num)
-        return sum(addStack)
+                left=int(''.join(exp[:j]))
+                bleft=int(''.join(exp[j:plus]))
+            
+            lhs.append([left,bleft])   
+        # print(lhs)      
+        rhs=[]
+        for i in range(len(exp)-1,plus,-1):
+            if i==len(exp)-1:
+                rite=1
+                brite=int(''.join(exp[plus+1:]))
+            else:
+                rite=int(''.join(exp[i+1:]))
+                brite=int(''.join(exp[plus+1:i+1]))
+            rhs.append([brite,rite])    
+        # print(lhs,rhs)   
+        
+        for idx,i in enumerate(lhs):
+            for jdx,j in enumerate(rhs):
+                temp=i[0]*(i[1]+j[0])*j[1]
+                if temp<maxx:
+                    maxx=temp
+                    ans=''
+                    if idx==0:
+                        ans+='('+str(i[1])+'+'
+                    else:
+                        ans+=str(i[0])+'('+str(i[1])+'+'
+                    if jdx==0:
+                        ans+=str(j[0])+')'
+                    else:
+                        ans+=str(j[0])+')'+str(j[1])
+        return ans if ans else '('+''.join(exp)+')'              
+                
+            
+            
+        
