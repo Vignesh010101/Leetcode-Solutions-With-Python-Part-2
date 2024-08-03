@@ -1,9 +1,14 @@
 class Solution:
-    def countLatticePoints(self, A: List[List[int]]) -> int:
-        res = set()
-        for x,y,r in A:
-            for i in range(x - r,x + r + 1):
-                for j in range(y - r, y + r + 1):
-                    if (x - i) ** 2 + (y - j) ** 2 <= r * r:
-                        res.add((i,j))
-        return len(res)
+    def countLatticePoints(self, circles: List[List[int]]) -> int:
+        points = set()
+        for x, y, r in circles:
+            points.add((x, y))
+            points.add((x + r, y))
+            points.add((x - r, y))
+            points.add((x, y + r))
+            points.add((x, y - r))
+            for i in range(x-r+1, x+r):
+                for j in range(y-r+1, y+r):
+                    if (i,j) not in points and (i - x) ** 2 + (j - y) ** 2 <= r ** 2:
+                        points.add((i,j))
+        return len(points)
