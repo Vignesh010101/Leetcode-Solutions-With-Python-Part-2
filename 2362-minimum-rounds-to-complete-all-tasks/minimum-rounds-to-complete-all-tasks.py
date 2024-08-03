@@ -1,12 +1,9 @@
 class Solution:
     def minimumRounds(self, tasks: List[int]) -> int:
-        counter = Counter(tasks)
-
-        ans = 0
-        for task, num in counter.items():
-            if num == 1:
-                return -1
-            ans += num // 3
-            if num % 3:
-                ans += 1
-        return ans
+        k = 0
+        c = Counter(tasks).values()
+        if 1 in c:
+            return -1
+        for j in c:
+            k += j // 3 + bool(j % 3)
+        return k
