@@ -1,9 +1,25 @@
 class Solution:
     def minimizeResult(self, expression: str) -> str:
-        left, right = expression.split('+')
-        value = lambda s: eval(s.replace('(','*(').replace(')',')*').strip('*'))
-        
-        lft = [left[0:i]+'('+left[i:] for i in range(len(left))]
-        rgt = [right[0:i]+')'+right[i:] for i in range(1, len(right)+1)]
-       
-        return min([l+'+'+r for l in lft for r in rgt], key=value)
+
+        def eval_expr(l,li,ri):
+            ai=1
+            if li!=0:
+                l.insert(li,'*')
+                ai+=1
+            if ri!=len(l)-ai:
+                l.insert(ri+ai,'*')
+            return eval(''.join(l))
+
+        pi=expression.index('+')
+        length=len(expression)
+        res_sum,res_s=float('inf'),None
+        for i in range(pi):
+            for j in range(pi+2,length+1):
+                l=list(expression)
+                l.insert(i,'(')
+                l.insert(j+1,')')
+                t=eval_expr(l,i,j+1)
+                if t<res_sum:
+                    res_sum=t
+                    res_s=''.join([c for c in l if c!='*'])
+        return res_s
