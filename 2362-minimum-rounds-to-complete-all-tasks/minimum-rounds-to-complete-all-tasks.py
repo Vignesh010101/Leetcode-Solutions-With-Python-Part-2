@@ -1,23 +1,12 @@
 class Solution:
     def minimumRounds(self, tasks: List[int]) -> int:
-        dic = {}
-        #construct a dictionary of dificulty occurence
-        for item in tasks:
-            if item in dic:
-                dic[item] += 1
-            else:
-                dic[item] = 1
-        
-        count = 0
-        for idx, val in dic.items():
-            # return if value is 1
-            if val == 1:
+        counter = Counter(tasks)
+
+        ans = 0
+        for task, num in counter.items():
+            if num == 1:
                 return -1
-            
-            # calculate round
-            if val%3 == 0:
-                count += val//3
-            else:
-                count += (val // 3) + 1
-        
-        return count
+            ans += num // 3
+            if num % 3:
+                ans += 1
+        return ans
