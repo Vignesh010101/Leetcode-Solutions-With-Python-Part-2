@@ -1,19 +1,15 @@
 class Solution:
-    def maximumBags(self, capacity: List[int], rocks: List[int], additionalRocks: int) -> int:
-        vacant = []
-        for a, b in zip(capacity, rocks):
-            vacant.append(a - b)
+    def maximumBags(self, capacity: list[int], rocks: list[int], additionalRocks: int) -> int:
+        rock = [capacity[x] - rocks[x] for x in range(len(capacity))]
+        bags = rock.count(0)
+        rock = [x for x in rock if x != 0]
+        rock.sort()
 
-        vacant.sort()
-        ans = 0
-
-        for i in range(len(vacant)):
-            if vacant[i] == 0:
-                ans += 1
+        for x in rock:
+            if not additionalRocks - x < 0:
+                bags += 1
+                additionalRocks -= x
             else:
-                if additionalRocks >= vacant[i]:
-                    additionalRocks -= vacant[i]
-                    ans += 1
-                else:
-                    break
-        return ans
+                break
+
+        return bags
