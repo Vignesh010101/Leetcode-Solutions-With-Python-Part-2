@@ -1,15 +1,26 @@
 class Solution:
-    def maximumBags(self, capacity: list[int], rocks: list[int], additionalRocks: int) -> int:
-        rock = [capacity[x] - rocks[x] for x in range(len(capacity))]
-        bags = rock.count(0)
-        rock = [x for x in rock if x != 0]
-        rock.sort()
-
-        for x in rock:
-            if not additionalRocks - x < 0:
-                bags += 1
-                additionalRocks -= x
-            else:
-                break
-
-        return bags
+    def maximumBags(self, capacity: List[int], rocks: List[int], additionalRocks: int) -> int:
+        
+        diffBag = []
+        # determine the difference betwin max capacity and current rocks
+        for c, r in zip(capacity,rocks):
+            diffBag.append(c-r)
+        
+        diffBag.sort()
+        
+        filledbags = 0
+        #count bags that can be filed
+        for f in diffBag:
+            if f == 0:
+                filledbags += 1
+                continue
+            
+            if additionalRocks <= 0:
+                return filledbags
+            
+            if f <= additionalRocks:
+                filledbags += 1
+            additionalRocks -= f
+        
+        return filledbags
+            
