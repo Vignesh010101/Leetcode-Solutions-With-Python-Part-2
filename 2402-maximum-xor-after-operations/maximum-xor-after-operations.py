@@ -1,3 +1,6 @@
 class Solution:
     def maximumXOR(self, nums: List[int]) -> int:
-        return reduce(or_, nums)
+        ans=0
+        for n in nums:
+            ans|=n
+        return ans
