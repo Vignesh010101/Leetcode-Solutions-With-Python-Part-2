@@ -1,12 +1,18 @@
+# class Solution:
+#     def kthDistinct(self, arr: List[str], k: int) -> str:
+
 class Solution:
     def kthDistinct(self, arr: List[str], k: int) -> str:
-        distinct_count = 0
-        for i in range(len(arr)):
-            if self.isDistinct(arr, i):
-                distinct_count += 1
-                if distinct_count == k:
-                    return arr[i]
-        return ""
+        from collections import defaultdict
 
-    def isDistinct(self, arr: List[str], index: int) -> bool:
-        return arr.count(arr[index]) == 1
+        count = defaultdict(int)
+    
+        for x in arr:
+            count[x] += 1
+
+        distinct = [x for x in count if count[x] == 1]
+
+        if k <= len(distinct):
+            return distinct[k - 1]
+    
+        return ""       
