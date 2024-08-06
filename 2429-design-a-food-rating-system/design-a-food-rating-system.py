@@ -1,31 +1,40 @@
+from collections import defaultdict
+import heapq
+
+class Food():
+    def __init__(self, food, rating):
+        self.food = food
+        self.rating = rating
+
+    def __lt__(self, other):
+        if self.rating == other.rating:
+            return self.food < other.food
+        return self.rating > other.rating
+
 class FoodRatings:
-    def __init__(
-        self, foods: List[str], cuisines: List[str], ratings: List[int]
-    ):
-        self.ratings = {}
-        self.food_to_cuisine = {}
-        self.ratings_heaps = {}
-        for i in range(len(foods)):
-            if cuisines[i] not in self.ratings:
-                self.ratings[cuisines[i]] = {}
-            self.ratings[cuisines[i]][foods[i]] = ratings[i]
-            self.food_to_cuisine[foods[i]] = cuisines[i]
-            if cuisines[i] not in self.ratings_heaps:
-                self.ratings_heaps[cuisines[i]] = []
-            heapq.heappush(self.ratings_heaps[cuisines[i]], (-ratings[i], foods[i]))
+
+    def __init__(self, foods: List[str], cuisines: List[str], ratings: List[int]):
+        self.food_lookup = defaultdict()
+        self.food_rating = defaultdict()
+        self.cuisine_lookup = defaultdict(list)
+        for food, cuisine, rating in zip(foods, cuisines, ratings):
+            self.food_lookup[food] = cuisine
+            self.food_rating[food] = rating
+            heapq.heappush(self.cuisine_lookup[cuisine], Food(food, rating))
 
     def changeRating(self, food: str, newRating: int) -> None:
-        self.ratings[self.food_to_cuisine[food]][food] = newRating
-        heapq.heappush(self.ratings_heaps[self.food_to_cuisine[food]], (-newRating, food))
+        self.food_rating[food] = newRating
+        cuisine = self.food_lookup[food]
+        heapq.heappush(self.cuisine_lookup[cuisine], Food(food, newRating))        
 
     def highestRated(self, cuisine: str) -> str:
-        rating, food = self.ratings_heaps[cuisine][0]
-        while rating != -self.ratings[cuisine][food] and len(self.ratings_heaps[cuisine]) > 0:
-            rating, food = heapq.heappop(self.ratings_heaps[cuisine])
+        highest_rated = self.cuisine_lookup[cuisine][0]
+        while self.food_rating[highest_rated.food] != highest_rated.rating:
+            heapq.heappop(self.cuisine_lookup[cuisine])
+            highest_rated = self.cuisine_lookup[cuisine][0]
+        return highest_rated.food
+        
 
-        heapq.heappush(self.ratings_heaps[cuisine], (rating, food))
-
-        return food
 
 # Your FoodRatings object will be instantiated and called as such:
 # obj = FoodRatings(foods, cuisines, ratings)
