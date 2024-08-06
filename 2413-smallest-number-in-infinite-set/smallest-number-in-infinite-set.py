@@ -1,31 +1,20 @@
+from sortedcontainers import SortedList 
+
 class SmallestInfiniteSet:
 
     def __init__(self):
-        self.min_val = 1
-        self.is_val_in_heap = {}
-        #self.is_val_in_heap = set()
-        self.heap = []
+        self.x = 1
+        self.seen = SortedList()
 
     def popSmallest(self) -> int:
-        if not self.heap:
-            smallest = self.min_val
-            self.min_val +=1
-        else:
-            smallest = heappop(self.heap)
-            del self.is_val_in_heap[smallest]
-            #self.is_val_in_heap.remove(smallest)
-        
-        return smallest
+        if self.seen: return self.seen.pop(0)
+        else: 
+            self.x += 1
+            return self.x - 1
 
     def addBack(self, num: int) -> None:
-        if num >= self.min_val or num in self.is_val_in_heap:
-            return
-        elif num == self.min_val - 1:
-            self.min_val -= 1
-        else:
-            heappush(self.heap, num)
-            self.is_val_in_heap[num] = True
-            #self.is_val_in_heap.add(num)
+        if num < self.x and num not in self.seen: 
+            self.seen.add(num)
 
 # Your SmallestInfiniteSet object will be instantiated and called as such:
 # obj = SmallestInfiniteSet()
