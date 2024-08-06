@@ -1,13 +1,25 @@
+import heapq
 from collections import defaultdict
-
 class Solution:
     def maximumSum(self, nums: List[int]) -> int:
-        max_seen = defaultdict(lambda: 0)
-        ans = -float('inf')
-        for i in nums:
-            digit_sum = sum(int(digit) for digit in str(i))
-            if digit_sum in max_seen:
-                ans = max(max_seen[digit_sum] + i, ans)
-            if i > max_seen[digit_sum]:
-                max_seen[digit_sum] = i
-        return ans if ans != -float('inf') else -1
+        store=defaultdict(list)
+        for n in nums:
+            val=n
+            rem=0
+
+            while n:
+                rem+=n%10
+                n=n//10
+
+            store[rem].append(val)
+
+            if len(store[rem])>2:
+                heapq.heapify(store[rem])
+                heapq.heappop(store[rem])
+
+        res=-1
+        for i in store:
+            if len(store[i])>1:
+                res=max(sum(store[i]),res)
+
+        return res
