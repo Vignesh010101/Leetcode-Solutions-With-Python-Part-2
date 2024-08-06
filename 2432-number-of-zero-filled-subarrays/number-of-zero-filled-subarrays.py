@@ -1,3 +1,16 @@
 class Solution:
-    def zeroFilledSubarray(self, nums: list[int]) -> int:
-        return sum(accumulate(nums, lambda a, x: 0 if x else a + 1, initial=0))
+    def zeroFilledSubarray(self, nums: List[int]) -> int:
+        aux = []
+        resp = 0
+        for i in range(len(nums)):
+            if nums[i] == 0:
+                aux.append(nums[i])
+            else:
+                if len(aux) > 0:
+                    n = len(aux)
+                    resp += n*(n+1)/2
+                    aux = []
+        if len(aux) > 0:
+            n = len(aux)
+            resp += n*(n+1)/2
+        return int(resp)
