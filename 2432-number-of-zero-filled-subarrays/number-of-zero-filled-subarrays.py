@@ -1,8 +1,13 @@
 class Solution:
     def zeroFilledSubarray(self, nums: List[int]) -> int:
-        ans,zero_sum = 0,0
-        for cur in nums+[1]:
-            if cur: zero_sum=0
-            else: zero_sum +=1
-            ans += zero_sum
-        return ans    
+        count = 0
+        num_subarr = 0
+        nums.append(-1)
+        for num in nums:
+            if num == 0:
+                count += 1
+            elif count > 0:
+                num_subarr += (count + 1) * count // 2
+                count = 0
+
+        return num_subarr    
