@@ -1,33 +1,18 @@
 class SmallestInfiniteSet:
-
     def __init__(self):
-        self.min_val = 1
-        self.is_val_in_heap = {}
-        #self.is_val_in_heap = set()
-        self.heap = []
-
+        self.heap = [i for i in range(1,1001)]
+        heapq.heapify(self.heap)
+        self.d = Counter(self.heap)
     def popSmallest(self) -> int:
-        if not self.heap:
-            smallest = self.min_val
-            self.min_val +=1
-        else:
-            smallest = heappop(self.heap)
-            del self.is_val_in_heap[smallest]
-            #self.is_val_in_heap.remove(smallest)
-        
-        return smallest
-
+        val = heapq.heappop(self.heap)
+        self.d[val] = 0
+        return val        
     def addBack(self, num: int) -> None:
-        if num >= self.min_val or num in self.is_val_in_heap:
-            return
-        elif num == self.min_val - 1:
-            self.min_val -= 1
-        else:
-            heappush(self.heap, num)
-            self.is_val_in_heap[num] = True
-            #self.is_val_in_heap.add(num)
+        if num not in self.d or not self.d[num]:
+            heapq.heappush(self.heap,num)
+            self.d[num] = 1
 
-# Your SmallestInfiniteSet object will be instantiated and called as such:
-# obj = SmallestInfiniteSet()
-# param_1 = obj.popSmallest()
-# obj.addBack(num)
+# # Your SmallestInfiniteSet object will be instantiated and called as such:
+# # obj = SmallestInfiniteSet()
+# # param_1 = obj.popSmallest()
+# # obj.addBack(num)
