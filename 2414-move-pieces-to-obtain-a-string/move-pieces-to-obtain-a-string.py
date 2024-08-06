@@ -1,24 +1,24 @@
 class Solution:
     def canChange(self, start: str, target: str) -> bool:
-        s_p = 0
-        t_p = 0
+        s = start .replace("_", "")
+        t = target.replace("_", "")
+        if s != t:
+            return False
 
-        while True:
-            while s_p < len(start) and start[s_p] == "_":
-                s_p += 1
-            while t_p < len(target) and target[t_p] == "_":
-                t_p += 1
-            if s_p == len(start) and t_p == len(target):
-                return True
-            if s_p == len(start) or t_p == len(target):
+        left  = 0 
+        right = 0 
+        for a, b in zip(start, target):
+            if   a == "L":
+                left  -= 1
+            elif a == "R":
+                right += 1
+
+            if   b == "L":
+                left  += 1
+            elif b == "R":
+                right -= 1
+
+            if left < 0 or right < 0:
                 return False
-            # if not the same
-            if start[s_p] != target[t_p]: return False
-            # for L 
-            if start[s_p] == "L":
-                if s_p < t_p: return False
-            else:
-                if s_p > t_p: return False
-            s_p += 1
-            t_p += 1
-        return 
+
+        return True
