@@ -1,23 +1,36 @@
-from sortedcontainers import SortedList
-
 class NumberContainers:
 
     def __init__(self):
-        self.mp = {} # index-to-number 
-        self.data = defaultdict(SortedList) # number-to-index 
-        
+        self.map = {} # number, heap[index]
+        self.index_to_number = {} # index, number
+
     def change(self, index: int, number: int) -> None:
-        if index in self.mp: 
-            oldNumber = self.mp[index]
-            self.data[oldNumber].remove(index)
-        self.mp[index] = number 
-        self.data[number].add(index)
-        
+        if number not in self.map:
+            self.map[number] = []
+
+        heapq.heappush(self.map[number], index)
+        self.index_to_number[index] = number
+
     def find(self, number: int) -> int:
-        if self.data[number]: return self.data[number][0]
+        if number not in self.map:
+            return -1
+
+        heap = self.map[number]
+        while heap:
+            index = heapq.heappop(heap)
+            if self.index_to_number[index] == number:
+                heapq.heappush(heap, index)
+                return index
+            
         return -1
 
-        
+
+# Your NumberContainers object will be instantiated and called as such:
+# obj = NumberContainers()
+# obj.change(index,number)
+# param_2 = obj.find(number)     
+
+
 # Your NumberContainers object will be instantiated and called as such:
 # obj = NumberContainers()
 # obj.change(index,number)
