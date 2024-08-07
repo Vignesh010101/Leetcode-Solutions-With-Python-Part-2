@@ -1,18 +1,20 @@
 class Solution:
-    def hIndex(self, citations):
-        n = len(citations)
-        count = [0] * (n + 1)
+    def hIndex(self, citations: List[int]) -> int:
+        i = 0
+        h = 0
+
+        citations.sort()
+        while i < len(citations):
+            lenlimit = min(citations[i],len(citations) - (i))
+            h = max(h,lenlimit)
+            i += 1
+
+        return h
+
+
+                
+
+
+            
+            
         
-        for c in citations:
-            if c >= n:
-                count[n] += 1
-            else:
-                count[c] += 1
-        
-        total = 0
-        for i in range(n, -1, -1):
-            total += count[i]
-            if total >= i:
-                return i
-        
-        return 0
