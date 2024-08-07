@@ -1,11 +1,10 @@
-import math
 class Solution:
     def taskSchedulerII(self, tasks: List[int], space: int) -> int:
-        count_dict = {}
-        total_days = 0
+        times = {v:0 for v in tasks} 
+        curr_time = 0
         for task in tasks:
-            if task not in count_dict:
-                count_dict[task] = -math.inf
-            total_days = max(total_days + 1, count_dict[task] + space + 1)
-            count_dict[task] = total_days
-        return total_days
+            if times[task] > curr_time:
+                curr_time = times[task]
+            curr_time += 1
+            times[task] = curr_time+space
+        return curr_time
