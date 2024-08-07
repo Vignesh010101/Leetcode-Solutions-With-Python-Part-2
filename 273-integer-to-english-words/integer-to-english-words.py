@@ -1,32 +1,25 @@
 class Solution:
-  def numberToWords(self, num: int) -> str:
-    if num == 0:
-      return "Zero"
-
-    belowTwenty = ["",        "One",       "Two",      "Three",
-                   "Four",    "Five",      "Six",      "Seven",
-                   "Eight",   "Nine",      "Ten",      "Eleven",
-                   "Twelve",  "Thirteen",  "Fourteen", "Fifteen",
-                   "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
-    tens = ["",      "Ten",   "Twenty",  "Thirty", "Forty",
-            "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
-
-    def helper(num: int) -> str:
-      if num < 20:
-        s = belowTwenty[num]
-      elif num < 100:
-        s = tens[num // 10] + " " + belowTwenty[num % 10]
-      elif num < 1000:
-        s = helper(num // 100) + " Hundred " + helper(num % 100)
-      elif num < 1000000:
-        s = helper(num // 1000) + " Thousand " + helper(num % 1000)
-      elif num < 1000000000:
-        s = helper(num // 1000000) + " Million " + \
-            helper(num % 1000000)
-      else:
-        s = helper(num // 1000000000) + " Billion " + \
-            helper(num % 1000000000)
-
-      return s.strip()
-
-    return helper(num)
+    def numberToWords(self, num: int) -> str:
+        mp = {1: "One",   11: "Eleven",    10: "Ten", 
+              2: "Two",   12: "Twelve",    20: "Twenty", 
+              3: "Three", 13: "Thirteen",  30: "Thirty", 
+              4: "Four",  14: "Fourteen",  40: "Forty",
+              5: "Five",  15: "Fifteen",   50: "Fifty", 
+              6: "Six",   16: "Sixteen",   60: "Sixty", 
+              7: "Seven", 17: "Seventeen", 70: "Seventy", 
+              8: "Eight", 18: "Eighteen",  80: "Eighty",
+              9: "Nine",  19: "Nineteen",  90: "Ninety"}
+        
+        def fn(n):
+            """Return English words of n (0-999) in array."""
+            if not n: return []
+            elif n < 20: return [mp[n]]
+            elif n < 100: return [mp[n//10*10]] + fn(n%10)
+            else: return [mp[n//100], "Hundred"] + fn(n%100)
+        
+        ans = []
+        for i, unit in zip((9, 6, 3, 0), ("Billion", "Million", "Thousand", "")): 
+            n, num = divmod(num, 10**i)
+            ans.extend(fn(n))
+            if n and unit: ans.append(unit)
+        return " ".join(ans) or "Zero"
