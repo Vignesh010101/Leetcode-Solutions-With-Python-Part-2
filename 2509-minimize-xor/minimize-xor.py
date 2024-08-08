@@ -1,23 +1,40 @@
 class Solution:
-    def minimizeXor(self, num1: int, num2: int, mxbits = 31) -> int:
+    # Function to count the number of set bits (1s) in a number
+    def countSetBits(self, number):
+        count = 0
+        while number != 0:
+            count += (number & 1)
+            number = number >> 1
+        return count
 
-        num1 = bin(num1)[2:].rjust(mxbits,'0') 
-        bitNum =bin(num2).count('1')
-        ans = ['0'] * mxbits
+    # Function to set the least significant unset bits in 'number' 
+    def addSetBits(self, number, bitsToAdd):
+        bitPosition = 0
+        while bitsToAdd > 0:
+            while (number >> bitPosition) & 1 == 1:
+                bitPosition += 1
+            number = number | (1 << bitPosition)
+            bitsToAdd -= 1
+        return number
 
-        for i in range(mxbits):
-            if num1[i] == '1':
-                ans[i] = '1'
-                bitNum-= 1
-                if bitNum == 0: break
-                
-        else:
-            for i in range(mxbits - 1, -1, -1):
- 
-                if num1[i] == '0':
-                    ans[i] = '1'
-                    bitNum-= 1
-                    if bitNum == 0: break
+    # Function to remove the least significant set bits in 'number'
+    def removeSetBits(self, number, bitsToRemove):
+        while bitsToRemove > 0:
+            number = number & (number - 1)
+            bitsToRemove -= 1
+        return number
 
-        return int(''.join(ans),2)
-        
+    def minimizeXor(self, num1, num2):
+        setBitsNum1 = self.countSetBits(num1)
+        setBitsNum2 = self.countSetBits(num2)
+
+        # If num1 already has the same number of set bits as num2
+        if setBitsNum1 == setBitsNum2:
+            return num1
+
+        # If num1 has fewer set bits than num2, add the necessary set bits
+        if setBitsNum1 < setBitsNum2:
+            return self.addSetBits(num1, setBitsNum2 - setBitsNum1)
+
+        # If num1 has more set bits than num2, remove the extra set bits
+        return self.removeSetBits(num1, setBitsNum1 - setBitsNum2)
