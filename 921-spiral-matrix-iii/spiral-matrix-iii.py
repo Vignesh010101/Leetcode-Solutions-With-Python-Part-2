@@ -1,25 +1,27 @@
-class Solution:
-    def spiralMatrixIII(self, rows: int, cols: int, rStart: int, cStart: int):
-        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        curRow, curCol = rStart, cStart
-        curNum = 1
-        dirIdx = 0
-        iterLen = 1
-        res = [[rStart, cStart]]
-        while curNum < rows * cols:
-            dr, dc = directions[dirIdx]
-            for c in range(iterLen):
-                newR = curRow + dr
-                newC = curCol + dc
+class Solution(object):
+    def spiralMatrixIII(self, rows, cols, rStart, cStart):
+        i,j = rStart, cStart
 
-                if 0 <= newR < rows and 0 <= newC < cols:
-                    curNum += 1
-                    res.append([newR, newC])
-                curRow = newR
-                curCol = newC
+        diri, dirj = 0, 1 # directions to move
+        twice = 2
+        res = []
+        moves = 1
+        next_moves = 2
 
-            dirIdx = (dirIdx + 1) % 4
-            if dirIdx % 2 == 0:  # Increase iterLen every two directions
-                iterLen += 1
-
+        while len(res) < (rows * cols):
+            if (-1 < i < rows) and ( -1 < j < cols):
+                res.append([i,j])
+            
+            i += diri
+            j += dirj
+            moves -= 1
+            if moves == 0:
+                diri, dirj = dirj, -diri # 90 deg Clockwise
+                twice -= 1
+                if twice == 0:
+                    twice = 2
+                    moves = next_moves
+                    next_moves += 1
+                else:
+                    moves = next_moves - 1
         return res
