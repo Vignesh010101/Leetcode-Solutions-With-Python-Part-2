@@ -1,12 +1,18 @@
 class Solution:
-    def minGroups(self, intervals: List[List[int]]) -> int:
-        line = []
-        for x, y in intervals: 
-            line.append((x, 1))
-            line.append((y+1, 0))
-        ans = prefix = 0 
-        for x, k in sorted(line): 
-            if k: prefix += 1
-            else: prefix -= 1
-            ans = max(ans, prefix)
-        return ans 
+    def minGroups(self, I: List[List[int]]) -> int:
+        N = len(I)
+        S, E = [], []
+        for s, e in I:
+            S.append(s)
+            E.append(e)
+        S.sort()
+        E.sort()
+
+        eIdx = 0
+        res = 0
+        for sIdx in range(N):
+            if S[sIdx] > E[eIdx]:
+                eIdx += 1
+            else:
+                res += 1
+        return res
