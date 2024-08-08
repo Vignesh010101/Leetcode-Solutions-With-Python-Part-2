@@ -1,11 +1,14 @@
 class Solution:
     def longestContinuousSubstring(self, s: str) -> int:
-        alphabet = "abcdefghijklmnopqrstuvwxyz"
-        first, max_len = 0,0
-
-        for i in range(1, len(s) + 1):
-            if s[first:i] in alphabet:
-                max_len = max(max_len, i - first)
+        start_index, max_length = 0, 1
+        ord_iter = enumerate(map(ord, s))
+        _, prev_ord_c = next(ord_iter)
+        for i, ord_c in ord_iter:
+            if ord_c - prev_ord_c == 1:
+                if (local_max_length := (i - start_index) + 1) > max_length:
+                    max_length = local_max_length
             else:
-                first = i - 1
-        return max_len
+                start_index = i
+            prev_ord_c = ord_c
+                
+        return max_length
