@@ -1,11 +1,15 @@
 class Solution:
     def partitionString(self, s: str) -> int:
-        set1=set(())
-        res=0
-        for i in range(len(s)):
-            if s[i] in set1:
-                set1.clear()
-                res+=1
-            set1.add(s[i])
-        res+=1
-        return res
+        lst=[]
+        ou=''
+        for i in s:
+            if i not in ou:
+                ou=ou+i
+            else:
+                lst.append(ou)
+                ou=i
+        lst.append(ou)
+        return len(lst)
+
+
+        
