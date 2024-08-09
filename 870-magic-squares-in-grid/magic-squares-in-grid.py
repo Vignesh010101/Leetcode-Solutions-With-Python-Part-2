@@ -1,35 +1,41 @@
 class Solution:
-	def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+    def numMagicSquaresInside(self, grid: List[List[int]]) -> int:
+        def isMagic(i, j):
+            once=[False]*10
+            rowSum=[0]*3
+            colSum= [0]*3
 
-		result = 0
-		rows = len(grid)
-		cols = len(grid[0])
+            for a in range(i-1, i+2):
+                for b in range(j-1, j+2):
+                    x= grid[a][b]
+                    if x < 1 or x > 9: return False
+                    rowSum[a-i+1] += x
+                    colSum[b-j+1] += x
+                    if once[x]: 
+                        return False  # it's not unique
+                    once[x]=True
 
-		for row in range(rows - 2):
-			for col in range(cols - 2):
+            for b in once[1:]: 
+                if not b: return False
 
-				count = 0
+            for sum in rowSum:
+                if sum!=15: return False
+            for sum in colSum:
+                if sum!=15: return False
+            
+            return grid[i-1][j-1]+grid[i+1][j+1]==10 and grid[i+1][j-1]+grid[i-1][j+1]==10
+        
+        r, c = len(grid), len(grid[0])
+        if r < 3 or c < 3: 
+            return 0
 
-				for num in range(1, 10):
+        cnt=0
+        for i in range(1, r-1):
+            for j in range(1, c-1):
+                if grid[i][j] == 5 and isMagic(i, j): 
+                    cnt+=1
+        return cnt
 
-					if num in grid[row][col : col + 3] + grid[row + 1][col : col + 3] + grid[row + 2][col : col + 3]:
-						count = count + 1
-					else:
-						break
 
-				row1 = sum(grid[row][col : col + 3])
-				row2 = sum(grid[row + 1][col : col + 3])
-				row3 = sum(grid[row + 2][col : col + 3])
 
-				diagonal1 = grid[row][col] + grid[row + 1][col + 1] + grid[row + 2][col + 2]
-				diagonal2 = grid[row][col + 2] + grid[row + 1][col + 1] + grid[row + 2][col]
-
-				col1 = grid[row][col] + grid[row + 1][col] + grid[row + 2][col]
-				col2 = grid[row][col + 1] + grid[row + 1][col + 1] + grid[row + 2][col + 1]
-				col3 = grid[row][col + 2] + grid[row + 1][col + 2] + grid[row + 2][col + 2]
-
-				if count == 9 and row1 == 15 and row2 == 15 and row3 == 15 and diagonal1 == 15 and diagonal2 == 15 and col1 == 15 and col2 == 15 and col3 == 15:
-				
-					result = result + 1
-
-		return result
+        
