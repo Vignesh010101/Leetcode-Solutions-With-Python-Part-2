@@ -1,13 +1,19 @@
 class Solution:
     def twoEditWords(self, queries: List[str], dictionary: List[str]) -> List[str]:
-
-        N, ans = range(len(queries[0])), []
-
-        f = lambda x,y: sum(x[i] != y[i] for i in N) < 3  # boolean function that returns whether
-                                                          # x and y are within two edits
-        for q in queries:                                 
-            for d in dictionary:
-                if f(q,d):
-                    ans.append(q)
+        def isWithinEditDistance(word1, word2):
+            count = 0
+            for c1, c2 in zip(word1, word2):
+                if c1 != c2:
+                    count += 1
+                    if count > 2:
+                        return False
+            
+            return True
+        
+        matching_queries = []
+        for query in queries:
+            for word in dictionary:
+                if isWithinEditDistance(query, word):
+                    matching_queries.append(query)
                     break
-        return  ans
+        return matching_queries    
