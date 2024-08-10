@@ -1,15 +1,7 @@
+def f(u, d):
+    return u + (u - 1) // (d - 1)
+
+
 class Solution:
-
-    def calculateLCM(self, a, b):
-        return (a * b) // gcd(a, b)
-
-    def calculateMax(self, count, divisor1, divisor2=1):
-        lcm_result = self.calculateLCM(divisor1, divisor2)
-        return count + count // (lcm_result - 1) - (0 if count % (lcm_result - 1) else 1)
-
-    def minimizeSet(self, divisor1, divisor2, uniqueCnt1, uniqueCnt2):
-        return max(
-            self.calculateMax(uniqueCnt1, divisor1),
-            self.calculateMax(uniqueCnt2, divisor2),
-            self.calculateMax(uniqueCnt1 + uniqueCnt2, divisor1, divisor2)
-        )
+    def minimizeSet(self, d1: int, d2: int, u1: int, u2: int) -> int:
+        return max(f(u1, d1), f(u2, d2), f(u1 + u2, math.lcm(d1, d2)))
