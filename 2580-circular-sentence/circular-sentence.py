@@ -1,13 +1,20 @@
 class Solution:
-    def isCircularSentence(self, sentence: str) -> bool:
-        words = sentence.split()
-        last = words[len(words) - 1]
-        if len(words) == 1 and words[0][0] == last[len(last) - 1]:
-            return True
-        else:
-            for i in range(0, len(words) - 1):
-                if words[i][len(words[i]) - 1] != words[i + 1][0]:
-                    return False
+	def isCircularSentence(self, sentence: str) -> bool:
 
-            if words[0][0] == last[len(last) - 1]:
-                return True
+		sentence = sentence.split()
+		first_word = sentence[0]
+		last_word = sentence[-1]
+
+		if first_word[0] != last_word[-1]:
+			return False
+
+		for i in range(len(sentence)-1):
+
+			first_word = sentence[i]
+			last_word = sentence[i+1]
+
+			if first_word[-1] != last_word[0]:
+				return False
+
+		return True
+		
