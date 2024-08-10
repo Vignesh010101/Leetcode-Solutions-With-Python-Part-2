@@ -1,11 +1,8 @@
 class Solution:
     def maxJump(self, stones: List[int]) -> int:
-        if len(stones) == 2:
-            return (stones[-1] - stones[0])
-        maxjump = 0
-        i, j = 0, 2
-        while j < len(stones):
-            maxjump = max(maxjump, (stones[j] - stones[i]))
-            i+= 1; j+= 1
-        return maxjump
-        
+        if len(stones)==2:
+            return stones[1]-stones[0]
+        jump=stones[0]
+        for i in range(len(stones)-2):
+            jump=max(jump,stones[i+2]-stones[i])
+        return jump
