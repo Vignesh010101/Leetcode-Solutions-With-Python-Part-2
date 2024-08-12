@@ -1,41 +1,21 @@
 class Solution:
     def vowelStrings(self, words: List[str], queries: List[List[int]]) -> List[int]:
-        d={}
-        for x in range(97,123):
-            d[chr(x)]=0
-        d["a"]=1
-        d["e"]=1
-        d["i"]=1
-        d["o"]=1
-        d['u']=1
-        le=len(words)
-        l=[0]*len(words)
-        y=0
-        for x in words:
-            if d[x[0]]==1 and d[x[-1]]==1:
-                l[y]=1
-            y+=1
-        p_sum=[0]*len(words)
-        prefix=0
-        for x in range(len(l)):
-            prefix+=l[x]
-            p_sum[x]=prefix
-        print(p_sum)
-        l=[]
-        for x in range(0,len(queries)):
-            c=queries[x][1]
-            d=queries[x][0]
-            if queries[x][0]==0:
-                l.append(p_sum[c])
-            else:
-                l.append(p_sum[c]-p_sum[d-1])
-        return l
-
+        ##### PreProcessing:- Creating prefix sum array of count of valid words
         
+        d={"a":1,"e":1,"i":1,"o":1,"u":1}
+        preProcess=[0]*(len(words)+1)
+        count=0
+        for i in range(len(words)):
+            if words[i][0] in d and words[i][-1] in d:
+                count+=1
+            preProcess[i+1]=count      
+        
+        #### Main Method  #####
 
-
-            
-                
-
-            
-                
+        ans=[]
+        for i in range(len(queries)):
+            start=queries[i][0]
+            end=queries[i][1]
+            count=preProcess[end+1]-preProcess[start]
+            ans.append(count)
+        return ans          
