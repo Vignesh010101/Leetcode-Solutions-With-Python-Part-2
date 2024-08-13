@@ -1,3 +1,18 @@
 class Solution:
-    def maxNumOfMarkedIndices(self, a: List[int]) -> int:
-        return (bisect_left(range(len(a)//2+1),1,key=lambda k,a=sorted(a):1^all(2*p<=q for p,q in zip(a[:k],a[-k:])))-1)*2
+    def maxNumOfMarkedIndices(self, nums: List[int]) -> int:
+        ans=0
+        j=len(nums)-1
+        nums.sort()
+        for i in range(len(nums)//2-1,-1,-1):
+            if nums[i]*2<=nums[j]:
+                ans+=2
+                j-=1
+        return ans
+
+
+        
+                    
+                
+        
+                    
+        
