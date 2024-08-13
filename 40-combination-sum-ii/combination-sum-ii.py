@@ -1,23 +1,21 @@
-class Solution(object):
-    def combinationSum2(self, candidates, target):
-        candidates.sort()
-        n = len(candidates)
-        ans = []
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        def backtrack(start, remain, current):
+            if remain == 0:
+                result.append(current[:])
+                return
+            
+            for i in range(start, len(candidates)):
+                if i > start and candidates[i] == candidates[i-1]:
+                    continue
+                if candidates[i] > remain:
+                    break
+                
+                current.append(candidates[i])
+                backtrack(i + 1, remain - candidates[i], current)
+                current.pop()
 
-        def backtrack(idx, curr_sum, elem):
-            if curr_sum == target:
-                ans.append(elem[:])
-                return
-            
-            if idx == n or curr_sum > target:
-                return
-            
-            elem.append(candidates[idx])
-            backtrack(idx + 1, curr_sum + candidates[idx], elem)
-            elem.pop()
-            # skipping the duplicates
-            while idx + 1 < n and candidates[idx] == candidates[idx+1]:
-                idx += 1
-            backtrack(idx + 1, curr_sum, elem)
-        backtrack(0, 0, [])
-        return ans
+        result = []
+        candidates.sort()
+        backtrack(0, target, [])
+        return result
