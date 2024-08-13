@@ -1,21 +1,23 @@
-class Solution:
-  def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
-    ans = []
+class Solution(object):
+    def combinationSum2(self, candidates, target):
+        candidates.sort()
+        n = len(candidates)
+        ans = []
 
-    def dfs(s: int, target: int, path: List[int]) -> None:
-      if target < 0:
-        return
-      if target == 0:
-        ans.append(path.copy())
-        return
-
-      for i in range(s, len(candidates)):
-        if i > s and candidates[i] == candidates[i - 1]:
-          continue
-        path.append(candidates[i])
-        dfs(i + 1, target - candidates[i], path)
-        path.pop()
-
-    candidates.sort()
-    dfs(0, target, [])
-    return ans
+        def backtrack(idx, curr_sum, elem):
+            if curr_sum == target:
+                ans.append(elem[:])
+                return
+            
+            if idx == n or curr_sum > target:
+                return
+            
+            elem.append(candidates[idx])
+            backtrack(idx + 1, curr_sum + candidates[idx], elem)
+            elem.pop()
+            # skipping the duplicates
+            while idx + 1 < n and candidates[idx] == candidates[idx+1]:
+                idx += 1
+            backtrack(idx + 1, curr_sum, elem)
+        backtrack(0, 0, [])
+        return ans
