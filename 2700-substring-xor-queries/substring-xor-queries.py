@@ -1,8 +1,12 @@
 class Solution:
     def substringXorQueries(self, s: str, queries: List[List[int]]) -> List[List[int]]:
-        d, ans, n = defaultdict(lambda:[-1,-1]), [], len(s)
-        for j in range(min(32,n)):
-            for i in range(n-j):
-                num = int(s[i:i+j+1], 2)
-                if num not in d: d[num] = [i, i+j]
-        return [d[a^b] for a, b in queries]
+        seen = {}
+        for i, ch in enumerate(s):
+            if ch == '1': 
+                val = 0
+                for j in range(i, min(len(s), i+30)): 
+                    val <<= 1
+                    if s[j] == '1': val ^= 1
+                    seen.setdefault(val, [i, j])
+            else: seen.setdefault(0, [i, i])
+        return [seen.get(x^y, [-1, -1]) for x, y in queries]
