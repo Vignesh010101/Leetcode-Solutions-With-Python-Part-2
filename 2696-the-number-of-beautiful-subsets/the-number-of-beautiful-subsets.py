@@ -1,22 +1,29 @@
 class Solution:
-    def solve(self, index, nums, map, k):
-        if index == len(nums):
-            if len(map) != 0:
-                return 1
-            return 0
+    def beautifulSubsets(self, nums: List[int], k: int) -> int:
+        def backtrack(start, current_subset):
+            nonlocal count
+            
+            # Only count non-empty subsets
+            if current_subset:
+                count += 1
+            
+            for i in range(start, len(nums)):
+                # Check if current element nums[i] can be added to the current_subset
+                can_add = True
+                for num in current_subset:
+                    if abs(num - nums[i]) == k:
+                        can_add = False
+                        break
+                        
+                if can_add:
+                    # Include nums[i] in the subset and proceed
+                    current_subset.append(nums[i])
+                    backtrack(i + 1, current_subset)
+                    # Backtrack: remove the last added element
+                    current_subset.pop()
         
-        include = 0
+        nums.sort()  # Sorting to make the checking more efficient
+        count = 0
+        backtrack(0, [])
+        return count
         
-        if (nums[index] + k) not in map and (nums[index] - k) not in map:
-            map[nums[index]] = map.get(nums[index], 0) + 1
-            include = self.solve(index + 1, nums, map, k)
-            map[nums[index]] -= 1
-            if map[nums[index]] == 0:
-                del map[nums[index]]
-        
-        exclude = self.solve(index + 1, nums, map, k)
-        
-        return include + exclude
-    
-    def beautifulSubsets(self, nums, k):
-        return self.solve(0, nums, {}, k)
