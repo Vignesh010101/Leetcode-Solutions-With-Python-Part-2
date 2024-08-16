@@ -2,15 +2,23 @@
  * @param {Function} fn
  */
 function memoize(fn) {
-    const cache = {};
+    let callcount=0;
+    let Mp=new Map();
     return function(...args) {
-      const key = String(args);
-      if (key in cache) {
-        return cache[key];
-      }
-      const result = fn(...args);
-      cache[key] = result;
-      return result;
+           let key;
+            key=`${args[0]}`;   
+           if(args.length==2)
+           {
+              key+="+"+`${args[1]}`;
+           }
+           if(Mp.has(key))
+           {
+              return Mp.get(key);  
+           }
+           callcount+=1;
+           let res=fn(...args);  
+           Mp.set(key,res);
+           return res;
     }
 }
 
