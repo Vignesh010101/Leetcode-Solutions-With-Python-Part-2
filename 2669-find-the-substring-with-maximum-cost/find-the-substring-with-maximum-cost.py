@@ -1,8 +1,28 @@
 class Solution:
     def maximumCostSubstring(self, s: str, chars: str, vals: List[int]) -> int:
-        mp = dict(zip(chars, vals))
-        ans = val = 0 
-        for i, ch in enumerate(s):
-            val = max(0, val + mp.get(ch, ord(ch)-96))
-            ans = max(ans, val)
-        return ans 
+        i=1
+        m=dict()
+        for c in ascii_lowercase:
+            if c in chars:
+                m.update({c:vals[chars.index(c)]})
+            else:
+                m.update({c:i})
+            i+=1
+        xx=[]
+        for i in range(len(s)):
+            xx.append(m[s[i]])
+        print(xx)
+        def maxSubArray(nums: List[int]) -> int:
+            max_sum=nums[0]
+            temp=0
+            for i in range(len(nums)):
+                if temp<0:
+                    temp=0
+                temp+=nums[i]
+                if temp>max_sum:
+                    max_sum=temp
+            return max_sum
+        
+        
+        
+        return max(maxSubArray(xx),0)
