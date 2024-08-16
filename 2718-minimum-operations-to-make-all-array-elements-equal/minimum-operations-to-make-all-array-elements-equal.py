@@ -1,32 +1,34 @@
 class Solution:
     def minOperations(self, nums: List[int], queries: List[int]) -> List[int]:
+        n=len(nums)
         nums.sort()
-        prefix_sum = [nums[0]]
-        ans = []
-        for i in range(1, len(nums)):
-            prefix_sum.append(prefix_sum[-1] + nums[i])
+        arr=nums.copy()
+        for i in range(1,len(nums)):  #Prefix_sum
+            nums[i]+=nums[i-1]
         
-        for target in queries:
-            l = 0
-            r = len(nums) - 1
-            pos = -2 # -2 for not found case
-            #left bin search             
-            while l <= r:
-                mid = (l + r) // 2
-                if nums[mid] > target:
-                    r = mid - 1
-                elif nums[mid] < target:
-                    l = mid + 1
-                else:
-                    pos = mid
-                    r = mid - 1     
 
-            if pos == -2:
-                pos = min(l, r)
-            # pos == -1 leftmost case
-            if pos == -1:
-                ans.append(prefix_sum[-1] - (len(nums))*target)
+        def binary_search(nums,x):
+            start=0
+            end=len(nums)-1 
+            while(start<=end):
+                mid=(start+end)//2
+                if(nums[mid]==x):
+                    return(mid)
+                elif(nums[mid]>x):
+                    end=mid-1
+                else:
+                    start=mid+1 
+            return(start)
+        
+
+        ans=[]
+        for i in range(0,len(queries)):
+            summ=0
+            index=binary_search(arr,queries[i])  #to get the index
+            if(index==0):
+                summ=nums[-1]-(n*queries[i])
             else:
-                ans.append((pos+1)*target - prefix_sum[pos] + prefix_sum[-1] - prefix_sum[pos] - (len(nums) -1 - pos)*target)
-            
-        return ans
+                summ=(index*queries[i])-(nums[index-1])    #for summ of elements before index
+                summ+=(nums[-1]-nums[index-1])-((n-index)*queries[i])     #for summ of elements after index
+            ans.append(summ)
+        return(ans)
