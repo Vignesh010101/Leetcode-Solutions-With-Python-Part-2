@@ -1,26 +1,48 @@
 var TimeLimitedCache = function() {
-     this.cache = {};
-     this.activeKeysCounter = 0;
+    this.cache = {};
 };
 
 TimeLimitedCache.prototype.set = function(key, value, duration) {
-    var keyInCache = this.cache[key];
-    keyInCache ? clearTimeout(keyInCache.timeout) : this.activeKeysCounter++;
-    
+  if (this.cache[key] && this.cache[key].timer) {
+    clearTimeout(this.cache[key].timer);
+    this.cache[key].value = value;
+    this.cache[key].timer = setTimeout(() => {
+      this.remove(key);
+    }, duration);
+    return true;
+  } else {
     this.cache[key] = {
       value: value,
-      timeout: setTimeout(() => {
-        this.cache[key].value = -1;
-        this.activeKeysCounter--;
-      }, duration),
-    }
-    return Boolean(keyInCache);
+      timer: setTimeout(() => {
+        this.remove(key);
+      }, duration)
+    };
+    return false;
+  }
 };
 
+/** 
+ * @param {number} key
+ * @return {number} value associated with key
+ */
 TimeLimitedCache.prototype.get = function(key) {
-    return this.cache[key]?.value || -1;
+  if (this.cache[key] && this.cache[key].timer) {
+    return this.cache[key].value;
+  } else {
+    return -1;
+  }
 };
 
 TimeLimitedCache.prototype.count = function() {
-    return this.activeKeysCounter;
+  let count = 0;
+  for (const key in this.cache) {
+    if (this.cache[key].timer) {
+      count++;
+    }
+  }
+  return count;
+};
+
+TimeLimitedCache.prototype.remove = function(key) {
+  delete this.cache[key];
 };
