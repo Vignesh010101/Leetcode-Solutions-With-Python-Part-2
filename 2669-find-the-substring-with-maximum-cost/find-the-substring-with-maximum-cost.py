@@ -1,12 +1,8 @@
 class Solution:
-    def maximumCostSubstring(self, a: str, c: str, x: List[int]) -> int:
-        y=[]
-        for i in a:
-            if i in c: y.append(x[c.index(i)])
-            else: y.append(ord(i)-96)
-        s=t=0
-        for i in y:
-            t=max(t,0)
-            s=max(s,t)
-            t+=i
-        return max(s,t,0)
+    def maximumCostSubstring(self, s: str, chars: str, vals: List[int]) -> int:
+        mp = dict(zip(chars, vals))
+        ans = val = 0 
+        for i, ch in enumerate(s):
+            val = max(0, val + mp.get(ch, ord(ch)-96))
+            ans = max(ans, val)
+        return ans 
