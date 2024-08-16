@@ -1,19 +1,15 @@
-/**
- * @param {any[]} arr
- * @param {number} depth
- * @return {any[]}
- */
 var flat = function (arr, n) {
-    if(n==0) return arr;
-    let result = [];
-    const traverse = (a, n) => {
-        for(let i in a) {
-            if(n>0 && Array.isArray(a[i]))
-                traverse(a[i], n-1)
-            else
-                result.push(a[i])
+    if(n == 0){
+        return arr;
+    }
+    let answer = [];
+    for(let i=0; i<arr.length; i++){
+        if(n>0 && Array.isArray(arr[i])){
+            answer.push(...flat(arr[i], n-1));
+        }
+        else{
+            answer.push(arr[i]);
         }
     }
-    traverse(arr, n);
-    return result;
+    return answer;
 };
