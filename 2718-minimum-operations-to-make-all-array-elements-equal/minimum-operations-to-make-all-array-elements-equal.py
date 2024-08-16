@@ -1,34 +1,25 @@
 class Solution:
     def minOperations(self, nums: List[int], queries: List[int]) -> List[int]:
-        n=len(nums)
+        prefix = []
         nums.sort()
-        arr=nums.copy()
-        for i in range(1,len(nums)):  #Prefix_sum
-            nums[i]+=nums[i-1]
+        prev = 0
+        for num in nums:
+            prev += num
+            prefix.append(prev)
         
-
-        def binary_search(nums,x):
-            start=0
-            end=len(nums)-1 
-            while(start<=end):
-                mid=(start+end)//2
-                if(nums[mid]==x):
-                    return(mid)
-                elif(nums[mid]>x):
-                    end=mid-1
-                else:
-                    start=mid+1 
-            return(start)
+        data = []
+        for target in queries:
+            i = 0
+            k = len(prefix)
+            tot = 0
+            while i < k:
+                j = (i + k) // 2
+                if nums[j] > target: k = j
+                else: i = j + 1
         
-
-        ans=[]
-        for i in range(0,len(queries)):
-            summ=0
-            index=binary_search(arr,queries[i])  #to get the index
-            if(index==0):
-                summ=nums[-1]-(n*queries[i])
-            else:
-                summ=(index*queries[i])-(nums[index-1])    #for summ of elements before index
-                summ+=(nums[-1]-nums[index-1])-((n-index)*queries[i])     #for summ of elements after index
-            ans.append(summ)
-        return(ans)
+            backs = prefix[i - 1] if i != 0 else 0
+            tot += i * target - backs
+            tot += (prefix[-1] - backs) - (len(nums) - i) * target
+            data.append(tot)
+        
+        return data
