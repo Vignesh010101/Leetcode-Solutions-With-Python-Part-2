@@ -1,13 +1,17 @@
 class Solution:
     def findPrefixScore(self, nums: List[int]) -> List[int]:
-        heap = [-nums[0]]
-        result = []
-        runningSum = 0
-        for num in nums:
-            maxSum = max(num, -1 * heapq.heappop(heap))
-            result.append(runningSum + num + maxSum)
-            runningSum += maxSum+num
-            heappush(heap,- maxSum)
-        return result
-        
+        n = len(nums)
+        ans = [0] * n
+        max_val = float('-inf')
+        for i in range(n):
+            max_val = max(max_val, nums[i])
+            conver = nums[i] + max_val
+            ans[i] = conver
+        res=[]
+        s=0
+        for i in range(n):
+            s+=ans[i]            
+            res.append(s)
+            
+        return res
         
