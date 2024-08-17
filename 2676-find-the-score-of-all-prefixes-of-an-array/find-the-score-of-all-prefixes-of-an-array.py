@@ -1,17 +1,17 @@
 class Solution:
     def findPrefixScore(self, nums: List[int]) -> List[int]:
         n = len(nums)
-        ans = [0] * n
-        max_val = float('-inf')
+        msf = -1
         for i in range(n):
-            max_val = max(max_val, nums[i])
-            conver = nums[i] + max_val
-            ans[i] = conver
-        res=[]
-        s=0
-        for i in range(n):
-            s+=ans[i]            
-            res.append(s)
-            
-        return res
+            if nums[i]>msf:
+                msf = nums[i]
+            nums[i] = msf + nums[i]
+        summ=0
+        for i in range (n):
+            nums[i] = summ + nums[i]
+            summ = nums[i]
+        return(nums)
+
+
+        
         
