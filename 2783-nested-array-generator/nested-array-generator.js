@@ -3,9 +3,12 @@
  * @return {Generator}
  */
 var inorderTraversal = function*(arr) {
-    for (const x of arr) {
-        if (Array.isArray(x)) yield* inorderTraversal(x); 
-        else yield x; 
+    for (let element of arr) {
+        if (Array.isArray(element)) {
+            yield* inorderTraversal(element);
+        } else {
+            yield element;
+        }
     }
 };
 /**
