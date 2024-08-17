@@ -4,44 +4,42 @@
 #         self.val = val
 #         self.left = left
 #         self.right = right
-from collections import deque
 
 class Solution:
     def replaceValueInTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
-        level_map = defaultdict(int)
-        level_map[-1] = root.val
-        q = deque([root])
-        level = -1
-        while len(q):
-            level += 1
-            for _ in range(len(q)):
-                node = q.popleft()
-                if node.left:
-                    level_map[level] += node.left.val
-                    q.append(node.left)
+        que = deque()
+        if root:
+            root.val = 0
+        else:
+            return
 
-                if node.right:
-                    level_map[level] += node.right.val
-                    q.append(node.right)
-
-        # level 0 and level 1 will always be zero
-        root.val = 0
-        level = -1
-        q = deque([root])
-        while len(q):
-            level += 1
-            for _ in range(len(q)):
-                node = q.popleft()
-                node_child_sum = 0
+        que.append(root)
+        prev_parent = []
+        while que:
+            sum_row = 0
+            loc_parent = []
+            for _ in range(len(que)):
+                node = que.popleft()
+                sum_row+=node.val
+                loc_parent.append(node)
                 if node.left:
-                    node_child_sum += node.left.val
+                    que.append(node.left)
                 if node.right:
-                    node_child_sum += node.right.val
+                    que.append(node.right)
 
-                if node.left:
-                    node.left.val = level_map[level] - node_child_sum
-                    q.append(node.left)
-                if node.right:
-                    node.right.val = level_map[level] - node_child_sum
-                    q.append(node.right)
-        return root   
+            if prev_parent:
+                for parent in prev_parent:
+                    left = parent.left.val if parent.left else 0
+                    right = parent.right.val if parent.right else 0
+                    if parent.left:
+                        parent.left.val = sum_row-(left+right)
+                    if parent.right:
+                        parent.right.val = sum_row-(left+right)
+            prev_parent = loc_parent
+        return root
+
+        return root        
+
+
+
+        
