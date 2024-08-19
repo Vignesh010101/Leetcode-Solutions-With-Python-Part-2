@@ -1,11 +1,15 @@
 class Solution:
     def minSteps(self, n: int) -> int:
-        @lru_cache(None)
-        def dp(ops, curr, saved):
-            if curr == n: return ops
-            if curr > n: return inf
-            if curr == saved: return dp(ops + 1, curr + saved, saved)
-            if saved == 0: return dp(ops + 1, curr, curr)
-            return min(dp(ops + 1, curr + saved, saved), dp(ops + 1, curr, curr))
-        return dp(0, 1, 0)    
+        if n == 1:
+            return 0
         
+        steps = 0
+        factor = 2
+        
+        while n > 1:
+            while n % factor == 0:
+                steps += factor
+                n //= factor
+            factor += 1
+            
+        return steps
