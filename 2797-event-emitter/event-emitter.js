@@ -36,4 +36,3 @@ class EventEmitter {
     return results;
   }
 }
-
