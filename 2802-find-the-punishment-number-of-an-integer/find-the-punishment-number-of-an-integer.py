@@ -1,19 +1,15 @@
 class Solution:
     def punishmentNumber(self, n: int) -> int:
-        def possible(sum_added,cache_sum, n, target):
-            
-            if not n:
-                return target == sum_added+cache_sum
-            num = int(n[0])
-            cas = cache_sum
-
-            return possible(sum_added,cas*10+num, n[1:], target) or possible(sum_added+cas,num, n[1:], target)
-
+        nums = [1, 9, 10, 36, 45, 55, 
+        82, 91, 99, 100, 235, 297, 
+        369, 370, 379, 414, 657, 
+        675, 703, 756, 792, 909, 
+        918, 945, 964, 990, 991, 
+        999, 1000]
         ans = 0
-        for i in range(1, n+1):
-           
-            if possible(0,0,str(i*i), i):
-                ans += i*i
+        for num in nums:
+            if n >= num:
+                ans += num**2
+            else:
+                break
         return ans
-            
-        
