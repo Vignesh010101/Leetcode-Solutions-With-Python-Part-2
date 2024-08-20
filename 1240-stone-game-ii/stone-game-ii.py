@@ -1,26 +1,20 @@
 class Solution:
-    def dp(self,i,nums,m,turn,dct):
-        if i>=len(nums):
-            return 0
-        if (i,m,turn) in dct:
-            return dct[(i,m,turn)]
-        mx=0
-        if turn:
-            for j in range(1,(2*m)+1):
-                x=self.dp(i+j,nums,max(m,j),False,dct)+sum(nums[i:i+j])
-                mx=max(mx,x)
-            dct[(i,m,turn)]=mx
-            return mx
-        else:
-            mn=float("infinity")
-            for j in range(1,(2*m)+1):
-                y=self.dp(i+j,nums,max(m,j),True,dct)
-                # print(y)
-                mn=min(mn,y)
-            dct[(i,m,turn)]=mn
-            return mn
-        
-
     def stoneGameII(self, piles: List[int]) -> int:
-        n=len(piles)
-        return self.dp(0,piles,1,True,{})
+        n = len(piles)
+        
+        dp = [[0] * (n + 1) for _ in range(n)]
+        suffix_sum = [0] * n
+        suffix_sum[-1] = piles[-1]
+        
+        for i in range(n - 2, -1, -1):
+            suffix_sum[i] = suffix_sum[i + 1] + piles[i]
+        
+        for i in range(n - 1, -1, -1):
+            for m in range(1, n + 1):
+                if i + 2 * m >= n:
+                    dp[i][m] = suffix_sum[i]
+                else:
+                    for x in range(1, 2 * m + 1):
+                        dp[i][m] = max(dp[i][m], suffix_sum[i] - dp[i + x][max(m, x)])
+        
+        return dp[0][1]
