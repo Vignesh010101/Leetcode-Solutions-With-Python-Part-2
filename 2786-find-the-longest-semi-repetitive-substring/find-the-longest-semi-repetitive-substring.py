@@ -1,16 +1,24 @@
 class Solution:
     def longestSemiRepetitiveSubstring(self, s: str) -> int:
-        starting_point = 0
-        last_repetetive = 0
-        current_max = 0
-        previous_symb = s[0]
-        for i, current_symb in enumerate(s):
-            if previous_symb == current_symb:
-                if last_repetetive:
-                    starting_point = last_repetetive
-                last_repetetive = i
-            current_max = max(i - starting_point + 1, current_max)
-            previous_symb = current_symb
-        return current_max
-
-
+        rep=0
+        m=0
+        res=1
+        left=0
+        flag=True
+        for right in range(1,len(s)):
+            if s[right-1]==s[right]:
+                if not rep:
+                    if m<res:
+                        m=res
+                    res=right-left+1
+                    left=right
+                    rep=1
+                else:
+                    if m<res:
+                        m=res
+                    res=right-left+1
+                    left=right
+            else:
+                res+=1
+        return max(m,res)
+        
