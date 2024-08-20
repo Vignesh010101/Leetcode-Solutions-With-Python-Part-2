@@ -28,7 +28,6 @@ class Solution:
                 
                 left += 1
             
-            #print(right,left,right-left+1)
             answer += (right-left+1)
         
         return answer
