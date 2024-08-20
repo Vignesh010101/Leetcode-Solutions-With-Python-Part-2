@@ -1,13 +1,11 @@
 class Solution:
     def matrixSumQueries(self, n: int, queries: List[List[int]]) -> int:
-        rows, cols = [0] * (n + 1), [0] * (n + 1) 
-        rows[-1], cols[-1] = n, n# last index stores length of hashset
+        rows, cols = set(i for i in range(n)), set(i for i in range(n))
         result = 0
-        action_for_query = [(rows, cols), (cols, rows)]
+        action_for_query = {0: (rows, cols), 1: (cols, rows)}
         for query_type, index, value in reversed(queries):
             modified_axis, opposite_axis = action_for_query[query_type]
-            if modified_axis[index] == 0:
-                modified_axis[index] = 1 # 1 = used
-                modified_axis[-1] -= 1 # decrease the count at the last index
-                result += opposite_axis[-1] * value
+            if index in modified_axis:
+                modified_axis.remove(index)
+                result += len(opposite_axis) * value
         return result
