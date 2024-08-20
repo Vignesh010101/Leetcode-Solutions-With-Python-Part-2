@@ -1,14 +1,16 @@
 class Solution:
     def matrixSumQueries(self, n: int, queries: List[List[int]]) -> int:
-
-        rowcol, ans, Seen = [n,n], 0, [0,0]
-
-        for typ, idx, val in reversed(queries):
-     
-            if Seen[typ]&(1<<idx): continue
-            Seen[typ]|= (1<<idx)
-    
-            ans+= val * rowcol[typ]
-            rowcol[typ^1]-= 1
-
-        return  ans
+        ans = 0
+        cntR, cntC = n, n
+        R = [True] * n
+        C = [True] * n
+        for t, i, v in queries[::-1]:
+            if t == 0 and R[i]:
+                ans += v * cntC
+                cntR -= 1
+                R[i] = False
+            elif t == 1 and C[i]:
+                ans += v * cntR
+                cntC -= 1
+                C[i] = False
+        return ans
