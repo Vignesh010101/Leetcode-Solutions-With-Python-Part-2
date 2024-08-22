@@ -1,12 +1,19 @@
 class Solution:
     def maximizeTheProfit(self, n: int, offers: List[List[int]]) -> int:
-        groups = [[] for _ in range(n)]
-        for start, end, gold in offers:
-            groups[end].append((start, gold))
+        mp = {}
+        for i in offers:
+            if i[0] not in mp:
+                mp[i[0]] = []
+            mp[i[0]].append([i[1], i[2]])
         
-        f = [0] * (n+1) # initialize it as 0
-        for end, x in enumerate(groups):
-            f[end+1] = f[end]
-            for start, gold in x: # iterate the bill which ends at the index i
-                f[end+1] = max(f[end+1], f[start] + gold)
-        return f[n]
+        arr = [0] * n
+        prof = 0
+        
+        for i in range(n):
+            if i in mp:
+                for j in mp[i]:
+                    arr[j[0]] = max(arr[j[0]], j[1] + prof)
+            prof = max(prof, arr[i])
+        
+        return prof
+        
