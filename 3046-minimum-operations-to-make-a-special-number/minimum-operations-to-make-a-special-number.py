@@ -1,24 +1,13 @@
 class Solution:
     def minimumOperations(self, num: str) -> int:
-        res = math.inf
-        pairs = {'0':['0','5'], '5':['2', '7']}
-        jj = -1
-        ii = -1
-        for i in range(len(num)-1,-1,-1):
-            if num[i] in pairs.keys():
-                ii = num[i]
-                for j in range(i-1,-1,-1):
-                    if num[j] in pairs[num[i]]: 
-                        res = min(res, len(num)-j-2)
-                        jj = num[j]
-
-        
-        if jj == -1:
-            if ii == '0':
-                res = min(res, len(num)-1) 
-            if ii == -1 or ii == '5':
-                res = min(res, len(num))
-    
-            
-            
-        return res
+        ans = inf 
+        for p in "00", "25", "50", "75": 
+            cand = 0 
+            i = 1
+            for ch in reversed(num): 
+                if p[i] == ch: i -= 1
+                else: cand += 1
+                if i == -1: break 
+            else: continue 
+            ans = min(ans, cand)
+        return ans if ans < inf else len(num) - int('0' in num)
