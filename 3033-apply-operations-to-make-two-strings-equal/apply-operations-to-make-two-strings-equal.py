@@ -1,21 +1,18 @@
 class Solution:
     def minOperations(self, s1: str, s2: str, x: int) -> int:
-        
-        diff =[]
-        n = len(s1)
-        for i in range(n):
+        diff = []
+        ret = 0
+        for i in range(len(s1)):
             if s1[i] != s2[i]:
                 diff.append(i)
+        if len(diff) & 1: return -1
         
-        m = len(diff)
-        if m %2 != 0:
-            return -1
         @cache
-        def minCostUpTo(i:int):
-            if i == 0:
-                return x/2
-            if i == -1:
-                return 0
-            return min((minCostUpTo(i-1)+x/2), (minCostUpTo(i-2)+ diff[i]-diff[i-1]))
+        def helper(l, r):
+            if l > r: return 0
+            ret = min(diff[l+1]-diff[l] + helper(l+2, r), diff[r]-diff[r-1] + helper(l, r-2), x + helper(l+1, r-1))
+            return ret
+        return helper(0, len(diff)-1)
         
-        return int(minCostUpTo(len(diff)-1))
+        
+        
