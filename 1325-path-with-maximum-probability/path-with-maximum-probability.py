@@ -25,3 +25,4 @@ class Solution:
                     heapq.heappush(pq, (-new_prob, neighbor))  
 
         return 0
+        
