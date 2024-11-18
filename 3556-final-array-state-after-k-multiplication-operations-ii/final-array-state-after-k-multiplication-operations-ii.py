@@ -1,26 +1,66 @@
-from heapq import *
 class Solution:
+
+    def equalizeQueue(self, n, k, multiplier):
+
+            queue = [0] * len(n)
+            prevPower = None
+            
+            for index, (logVal, num, originalIndex) in enumerate(n):
+                currentPower = int(logVal)
+            
+                if multiplier ** (currentPower + 1) <= num:
+                    #save ourselves from 2.0 (or 1.999999) rounding down to 1.0 accidentally because of floating point precision
+
+                    currentPower += 1
+                if index == 0:
+                    prevPower = currentPower
+                elif prevPower != currentPower:
+                    #bring everything before us to this logval
+                    multiplyCount = (currentPower - prevPower)
+            
+                    if k >= multiplyCount * index:
+                        k -= multiplyCount * index
+                        queue[index - 1] = multiplyCount
+            
+                    elif k >= index:
+                        multiplyCount = k // index
+                        k -= multiplyCount * index
+                        queue[index - 1] = multiplyCount
+                    prevPower = currentPower
+                    if k < index:
+                        return queue
+            
+            if k >= len(n):
+                multiplyCount = k // len(n)
+                k -= multiplyCount * len(n)
+                queue[len(n) - 1] = multiplyCount
+            return queue
+
     def getFinalState(self, nums: List[int], k: int, multiplier: int) -> List[int]:
-        if multiplier==1: return nums
-        mod=1_000_000_007
-        if len(nums)==1:
-            nums[0]=(nums[0]*pow(multiplier,k,mod))%mod
+        if multiplier == 1:
             return nums
-        while True and k>0:
-            mn=min(nums)
-            mx=max(nums)
-            if mn*multiplier>mx: break
-            for i in range(len(nums)):
-                if k>0 and nums[i]==mn:
-                    k-=1
-                    nums[i]*=multiplier
-        nums=[[nums[i],i] for i in range(len(nums))]
-        nums.sort()
-        val1,val2=k//len(nums),k//len(nums)+1
-        remaining=k%len(nums)
-        for i in range(remaining):
-            nums[i][0]=(nums[i][0]*pow(multiplier,val2,mod))%mod
-        for i in range(remaining,len(nums)):
-            nums[i][0]=(nums[i][0]*pow(multiplier,val1,mod))%mod
-        nums.sort(key=lambda x:x[1])
-        return [i[0] for i in nums]
+        n = []
+        for index, num in enumerate(nums):
+            #calculate the powers using the log function
+            n.append((math.log(num, multiplier), num, index))
+
+        n.sort()
+        queue = self.equalizeQueue(n, k, multiplier)
+        
+        #apply multiplications queue, save how many times we have to multiply every element:
+        multiplyBy = 0
+        for i in range(len(n) - 1, -1, -1):
+            logVal, num, originalIndex = n[i]
+            multiplyBy += queue[i]
+            k -= multiplyBy
+            n[i] = (logVal + multiplyBy, originalIndex, num, multiplyBy)
+        
+
+        n.sort()
+        
+        for i in range(k):
+            logVal, originalIndex, num, multiplyBy = n[i]
+            n[i] = (logVal + 1, originalIndex, num, multiplyBy + 1)
+        for logVal, originalIndex, num, multiplyBy in n:
+            nums[originalIndex] =( num * pow(multiplier, multiplyBy, (10 ** 9 + 7)) )% (10 ** 9 + 7)
+        return nums
