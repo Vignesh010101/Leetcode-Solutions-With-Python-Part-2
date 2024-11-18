@@ -1,72 +1,34 @@
 class Solution:
     def maximumValueSum(self, board: List[List[int]]) -> int:
-        m = len(board)
-        n = len(board[0])
-        valuesList = []
-        #Get max 3 row values for all rows
-        for i in range(m):
-            rowValues = []
-            max1 = -1
-            max2 = -1
-            max3 = -1
-            for j in range(n):
-                value = []
-                value.append(board[i][j])
-                value.append(i)
-                value.append(j)
-                
-                rowValues.append(value)
-                if(max1 == -1 or board[i][j] >= rowValues[max1][0]):
-                    max3 = max2
-                    max2 = max1
-                    max1 = j
-                elif(max2 == -1 or board[i][j] >= rowValues[max2][0]):
-                    max3 = max2
-                    max2 = j
-                elif(max3 == -1 or board[i][j] >= rowValues[max3][0]):
-                    max3 = j
-            valuesList.append(rowValues[max1])
-            valuesList.append(rowValues[max2])
-            valuesList.append(rowValues[max3])
+        m, n = len(board), len(board[0])
+        max_above = [[0] * n for _ in range(m)]
+        max_below = [[0] * n for _ in range(m)]
+        
+        for r in range(m):
+            for c in range(n):
+                above = max_above[r - 1][c] if r else -math.inf
+                max_above[r][c] = max(board[r][c], above)
 
-        def sortFunc(val):
-            return val[0]
-        #Sort all the possible values    
-        valuesList.sort(key=sortFunc, reverse=True)
+        for r in range(m - 1, -1, -1):
+            for c in range(n):
+                below = max_below[r + 1][c] if r + 1 < m else -math.inf
+                max_below[r][c] = max(board[r][c], below)
 
-        rows = [False] * m
-        cols = [False] * n
+        def top3Cols(row):
+            return heapq.nlargest(3, ((x, i) for i, x in enumerate(row)))
 
-        maxval = -10e9
+        def bestOfRows(row1, row2, row3):
+            cols1, cols2, cols3 = map(top3Cols, (row1, row2, row3))
+            ans = -math.inf
+            for x1, c1 in cols1:
+                for x2, c2 in cols2:
+                    for x3, c3 in cols3:
+                        if len({c1, c2, c3}) == 3:
+                            ans = max(ans, x1 + x2 + x3)
+            return ans
 
-        def backtrack(idx, curSum, nums, valuesList, rows, cols):
-            nonlocal maxval
+        ans = -math.inf
+        for r in range(1, m - 1):
+            ans = max(ans, bestOfRows(board[r], max_above[r - 1], max_below[r + 1]))
 
-            if nums == 3:
-                if curSum > maxval:
-                    maxval = curSum
-                return
-            if idx >= len(valuesList):
-                return
-            value = valuesList[idx][0]
-
-            #Check if it is possible to get new max from here. If not, return.
-            if (curSum + value * (3 - nums)) < maxval:
-                return
-            
-            #Pick
-            row = valuesList[idx][1]
-            col = valuesList[idx][2]
-            if(not(rows[row]) and not(cols[col])):
-                rows[row] = True
-                cols[col] = True
-                backtrack(idx+1, curSum+value, nums+1, valuesList, rows, cols)
-                rows[row] = False
-                cols[col] = False
-
-            #Dont pick
-            backtrack(idx+1, curSum, nums, valuesList, rows, cols)
-
-        backtrack(0, 0, 0, valuesList, rows, cols)
-
-        return maxval
+        return ans
