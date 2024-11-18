@@ -1,13 +1,11 @@
-from sortedcontainers import SortedList
-
 class Solution:
     def shortestDistanceAfterQueries(self, n: int, queries: List[List[int]]) -> List[int]:
-        graph = SortedList(range(n))
         ans = []
+        jump = list(range(1, n))
+        n -= 1
         for u, v in queries: 
-            lo = graph.bisect_right(u)
-            hi = graph.bisect_left(v)
-            for _ in range(lo, hi): 
-                graph.pop(lo)
-            ans.append(len(graph)-1)
+            while jump[u] < v: 
+                jump[u], u = v, jump[u]
+                n -= 1
+            ans.append(n)
         return ans 
